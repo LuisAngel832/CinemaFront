@@ -10,9 +10,6 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Navbar />
-
-
-
         <Routes>
           <Route path='/' element={<LoginPage/>} />
         </Routes>
