@@ -1,1 +1,1 @@
-aqui van las llamadas a la api
+aqui van los estados globales
