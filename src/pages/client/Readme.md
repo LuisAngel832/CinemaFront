@@ -1,1 +1,0 @@
-aqui van las pages de cliente
