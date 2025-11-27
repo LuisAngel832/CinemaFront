@@ -1,58 +1,61 @@
 import { Link } from "react-router-dom";
-import FunctionItem from "../../components/FunctionItem";
+import FunctionItem from "./componentsClient/FunctionItem";
 
 const funcionesMock = [
-  { sala: "Sala 1", hora: "15:00", idioma: "Español" },
-  { sala: "Sala 2", hora: "18:30", idioma: "Inglés (Subtitulada)" },
-  { sala: "Sala 3", hora: "21:00", idioma: "Español" }
+  {
+    id: 1,
+    sala: "Sala 1",
+    hora: "15:00",
+    idioma: "Español",
+    asientosDisponibles: 45,
+  },
+  {
+    id: 2,
+    sala: "Sala 2",
+    hora: "18:30",
+    idioma: "Inglés (Subtitulada)",
+    asientosDisponibles: 60,
+  },
+  {
+    id: 3,
+    sala: "Sala 3",
+    hora: "21:00",
+    idioma: "Español",
+    asientosDisponibles: 32,
+  },
 ];
+
+const movieTitle = "La Última Misión";
 
 export default function FuncionesPage() {
   return (
-    <main
-      className="
-        flex-1 min-h-[80vh]
-        py-[1.5rem] px-[2rem] pb-[3rem]
-      "
-    >
-      <div className="max-w-[1200px] w-full mx-auto px-[2rem]">
-
+    <main className="flex-1 min-h-[80vh] bg-[#f4f5fb]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
-          to="/"
-          className="
-            bg-none border-none text-[0.95rem]
-            mb-[1.2rem] cursor-pointer
-            p-0 text-left block w-fit ml-0
-          "
+          to="/cartelera"
+          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
-          ← Volver a cartelera
+          <span className="mr-1">←</span>
+          Volver a cartelera
         </Link>
 
-        <h1
-          className="
-            mt-[1rem] mb-[1.5rem]
-            text-left text-[2em]
-          "
-        >
-          La Última Misión
+        <h1 className="text-3xl font-semibold text-gray-900 mb-1">
+          {movieTitle}
         </h1>
 
-        <p
-          className="
-            text-[0.9rem] mb-[1.5rem]
-            opacity-80 text-left
-          "
-        >
+        <p className="text-sm text-gray-500 mb-6">
           Selecciona una función
         </p>
 
-        <section
-          className="
-            w-[95%] flex flex-col gap-[1rem]
-          "
-        >
-          {funcionesMock.map((f, i) => (
-            <FunctionItem key={i} {...f} />
+        <section className="space-y-3">
+          {funcionesMock.map((f) => (
+            <FunctionItem
+              key={f.id}
+              sala={f.sala}
+              hora={f.hora}
+              idioma={f.idioma}
+              asientosDisponibles={f.asientosDisponibles}
+            />
           ))}
         </section>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import ModalCompraExitosa from "../../components/ModalCompraExitosa";
+import ModalCompraExitosa from "./componentsClient/ModalCompraExitosa";
 
 export default function PagoPage() {
   const [showModal, setShowModal] = useState(false);

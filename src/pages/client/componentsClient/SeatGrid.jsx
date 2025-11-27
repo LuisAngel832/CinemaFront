@@ -1,54 +1,69 @@
-import React from "react";
 import SeatItem from "./SeatItem";
 
-const seatRows = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const ocupadoDemo = ["A3", "C5", "E4"];
-
-const SeatGrid = () => {
+const SeatGrid = ({
+  seatRows,
+  occupiedSeats,
+  selectedSeats,
+  onToggleSeat,
+}) => {
   return (
-    <div>
-      <div className="text-center py-2 mb-2 border-t-2 border-[#ccc] text-[0.9rem] opacity-80">
-        PANTALLA
+    <div className="flex flex-col items-center">
+      <div className="w-[520px] flex flex-col items-center mb-4">
+        <div className="w-full h-[3px] bg-gray-200 rounded-full mb-2" />
+        <div className="text-xs tracking-[0.25em] text-gray-500">
+          PANTALLA
+        </div>
       </div>
 
-      {seatRows.map((row) => (
-        <div
-          key={row}
-          className="flex items-center gap-[0.8rem] mb-[1.2rem]"
-        >
-          <div className="w-[180px] text-[0.9rem] opacity-80 text-right pr-2">{row}</div>
+      <div className="w-[520px]">
+        {seatRows.map((row) => (
+          <div
+            key={row}
+            className="flex items-center gap-4 mb-4 ml-11"
+          >
+            <div className="w-6 text-sm text-gray-500 text-right">
+              {row}
+            </div>
 
-          {Array.from({ length: 10 }).map((_, index) => {
-            const seatCode = `${row}${index + 1}`;
-            const status = ocupadoDemo.includes(seatCode)
-              ? "ocupado"
-              : "disponible";
+            <div className="flex gap-2 flex-wrap">
+              {Array.from({ length: 10 }).map((_, index) => {
+                const seatCode = `${row}${index + 1}`;
 
-            return (
-              <SeatItem key={seatCode} label={seatCode} status={status} />
-            );
-          })}
-        </div>
-      ))}
+                let status = "disponible";
+                if (occupiedSeats.includes(seatCode)) {
+                  status = "ocupado";
+                } else if (selectedSeats.includes(seatCode)) {
+                  status = "seleccionado";
+                }
 
-      <div className="mt-[1.8rem] flex gap-8 justify-center">
-        <div className="flex items-center gap-[0.4rem]">
-          <div className="w-[20px] h-[20px] rounded-[4px] border border-[#ccc] bg-[#eaeaea]" />
-          <span>Disponible</span>
-        </div>
+                return (
+                  <SeatItem
+                    key={seatCode}
+                    label={seatCode}
+                    status={status}
+                    onClick={() => onToggleSeat(seatCode)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
 
-        <div className="flex items-center gap-[0.4rem]">
-          <div className="w-[20px] h-[20px] rounded-[4px] border border-[#ccc] bg-[#dcdcdc]" />
-          <span>Seleccionado</span>
-        </div>
-
-        <div className="flex items-center gap-[0.4rem]">
-          <div className="w-[20px] h-[20px] rounded-[4px] border border-[#ccc] bg-[#bbbbbb]" />
-          <span>Ocupado</span>
-        </div>
+      <div className="mt-6 flex flex-wrap gap-8 justify-center text-sm">
+        <LegendItem colorClass="bg-emerald-500" label="Disponible" />
+        <LegendItem colorClass="bg-purple-600" label="Seleccionado" />
+        <LegendItem colorClass="bg-red-500" label="Ocupado" />
       </div>
     </div>
   );
 };
+
+const LegendItem = ({ colorClass, label }) => (
+  <div className="flex items-center gap-2">
+    <div className={`w-5 h-5 rounded-md ${colorClass}`} />
+    <span className="text-gray-700">{label}</span>
+  </div>
+);
 
 export default SeatGrid;
