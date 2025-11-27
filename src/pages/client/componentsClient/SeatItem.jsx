@@ -1,23 +1,37 @@
 import React from "react";
 
-const SeatItem = ({ label, status }) => {
-  const statusColors = {
-    disponible: "bg-[#eaeaea]",
-    seleccionado: "bg-[#dcdcdc]",
-    ocupado: "bg-[#bbbbbb]"
+const SeatItem = ({ label, status, onClick }) => {
+  const baseClasses = `
+    w-[28px] h-[28px]
+    rounded-[6px]
+    flex justify-center items-center
+    text-white text-[0.8rem]
+    transition
+  `;
+
+  let statusClasses = "";
+
+  if (status === "disponible") {
+    statusClasses = "bg-emerald-500 hover:bg-emerald-600 cursor-pointer";
+  } else if (status === "seleccionado") {
+    statusClasses = "bg-purple-600 hover:bg-purple-700 cursor-pointer";
+  } else if (status === "ocupado") {
+    statusClasses = "bg-red-500 cursor-not-allowed opacity-80";
+  }
+
+  const handleClick = () => {
+    if (status === "ocupado") return;
+    if (onClick) onClick(label);
   };
 
   return (
-    <div
-      className={`
-        w-[28px] h-[28px]
-        rounded-[6px] border border-[#ccc]
-        flex justify-center items-center
-        ${statusColors[status]}
-      `}
+    <button
+      type="button"
+      onClick={handleClick}
+      className={`${baseClasses} ${statusClasses}`}
     >
-      <span className="text-[0.8rem]">💺</span>
-    </div>
+      <span>💺</span>
+    </button>
   );
 };
 

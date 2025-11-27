@@ -1,37 +1,29 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
-const FunctionItem = ({ sala, hora, idioma }) => {
+const FunctionItem = ({ sala, hora, idioma, asientosDisponibles }) => {
   return (
-    <div
-      className="
-        w-full bg-white
-        border border-[#ddd] rounded-[10px]
-        px-4 py-[0.9rem]
-        flex justify-between items-center
-      "
-    >
-      <div className="flex items-center gap-[0.6rem]">
-        <div className="text-[0.95rem] opacity-70">📍</div>
-        <span className="text-[0.9rem]">{sala}</span>
+    <div className="w-full bg-white border border-gray-200 rounded-xl px-5 py-3 flex items-center justify-between shadow-sm">
+      <div className="flex items-center gap-6 text-sm text-gray-700">
+        <div className="flex items-center gap-2">
+          <span className="text-gray-400 text-base">📍</span>
+          <span className="font-medium">{sala}</span>
+        </div>
 
-        <div className="text-[0.95rem] opacity-70">⏱</div>
-        <span className="text-[0.9rem]">{hora}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-400 text-base">⏱</span>
+          <span>{hora}</span>
+        </div>
 
-        <div className="text-[0.95rem] opacity-70">🌐</div>
-        <span className="text-[0.9rem]">{idioma}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-400 text-base">🌐</span>
+          <span>{idioma}</span>
+        </div>
+
       </div>
 
       <Link
         to="/asientos"
-        className="
-          py-[0.45rem] px-[0.9rem]
-          border border-[#333]
-          rounded-[6px]
-          bg-transparent
-          cursor-pointer
-          no-underline text-inherit
-        "
+        className="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-white"
       >
         Seleccionar
       </Link>
