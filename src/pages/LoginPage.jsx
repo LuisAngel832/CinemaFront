@@ -13,8 +13,6 @@ export default function LoginPage() {
             setError('Por favor, completa todos los campos');
             return;
         }
-        
-        // Lógica de inicio de sesión aquí
         console.log('Intento de login:', { email, password });
         setError('');
     };

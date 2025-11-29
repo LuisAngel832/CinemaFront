@@ -8,17 +8,17 @@ const Navbar = ({logedIn}) => {
       
       <div className="flex gap-10 items-center ml-10">
         <div className="group flex items-center text-white font-bold px-3 py-1 rounded cursor-pointer">
-          <LuTicket className="text-4xl transform rotate-90 transition-transform transition-colors duration-200 ease-out origin-center group-hover:text-purple-600 group-hover:scale-105" />
-          <p className="ml-3 text-2xl font-semibold transition-transform transition-colors duration-200 ease-out origin-center group-hover:text-purple-600 group-hover:scale-105">Cine Plus</p>
+          <LuTicket className="text-4xl transform rotate-90 transition-transform duration-200 ease-out origin-center group-hover:text-purple-600 group-hover:scale-105" />
+          <p className="ml-3 text-2xl font-semibold transition-colors duration-200 ease-out origin-center group-hover:text-purple-600 group-hover:scale-105">Cine Plus</p>
         </div>
 
-        <button className="text-white font-semibold text-2xl px-3 py-1 rounded transition-transform transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
+        <button className="text-white font-semibold text-2xl px-3 py-1 rounded  transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
           Cartelera
         </button>
 
         {
           logedIn && (
-            <button className="text-white font-bold px-3 py-1 rounded transition-transform transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
+            <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
               Mi cuenta
             </button>
           )
