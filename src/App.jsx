@@ -12,6 +12,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path='/' element={<LoginPage/>} />
+          <Route path='/gestion-funciones' element={<GestionDeFunciones/>} />       
         </Routes>
       </AuthProvider>
     </BrowserRouter>
