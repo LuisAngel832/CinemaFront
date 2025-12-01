@@ -64,6 +64,18 @@ const PurchaseSummary = ({
       {/* Botón */}
       <Link
         to={disabled ? "#" : "/pago"}
+        state={
+          disabled
+            ? null
+            : {
+                total,
+                seatPrice,
+                selectedSeats,
+                movieTitle,
+                hall,
+                time,
+              }
+        }
         className={`
           w-full block text-center py-2.5 rounded-lg text-sm font-medium
           ${disabled
