@@ -1,18 +1,18 @@
 import Input from "./Input";
 
-const Agregar = ({ setIsAdding }) => {
+const AgregarPelicula = ({ setIsAdding }) => {
     return (
         <div className="z-10 top-0 left-0 w-screen h-screen fixed bg-black/50 flex items-center justify-center">
             <div className="bg-white rounded-2xl shadow-lg p-8 w-[90%] max-w-md">
-                <h2 className="text-2xl font-semibold mb-2">Agregar Función</h2>
-                <p className="text-black/70 mb-4">Agrega una nueva función para la película seleccionada.</p>
+                <h2 className="text-2xl font-semibold mb-2">Agregar Pelicula</h2>
+                <p className="text-black/70 mb-4">Agrega una nueva Pelicula .</p>
 
                 <form className="flex flex-col gap-4">
                     <Input label="Pelicula" data="" />
-                    <Input label="Sala" data="" />
-                    <Input label="Hora" data="" />
-                    <Input label="Idioma" data="" />
-                    <Input label="Tipo" data="" />
+                    <Input label="Genero" data="" />
+                    <Input label="Clasificacion" data="" />
+                    <Input label="Duración" data="" />
+                    <Input label="Estado" data="" />
                 </form>
 
                 <div className="flex gap-3 mt-6">
@@ -31,4 +31,4 @@ const Agregar = ({ setIsAdding }) => {
     );
 };
 
-export default Agregar;
+export default AgregarPelicula;

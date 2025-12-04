@@ -37,7 +37,6 @@ export default function ProfileHistoryPage() {
   return (
     <main className="max-w-[900px] mx-auto flex-1 pt-6 px-8">
 
-      {/* Encabezado */}
       <div className="flex items-center gap-4 mb-8">
         <div className="w-[90px] h-[90px] rounded-full border-2 border-[#ccc] bg-[#eaeaea]" />
         <div>
@@ -45,7 +44,6 @@ export default function ProfileHistoryPage() {
         </div>
       </div>
 
-      {/* TABS */}
       <div className="flex gap-4 mb-4">
         <Link 
           to="/perfil" 
@@ -69,7 +67,6 @@ export default function ProfileHistoryPage() {
         </Link>
       </div>
 
-      {/* HISTORIAL */}
       <section className="border border-[#ddd] rounded-[12px] bg-white p-6">
         <h3 className="text-[1.25rem] m-0">Historial de Compras</h3>
         <p className="mt-[-0.3rem] mb-4 text-[0.9rem] opacity-70 text-left">
@@ -82,7 +79,6 @@ export default function ProfileHistoryPage() {
               key={i} 
               className="border border-[#ddd] bg-white rounded-[10px] p-4 px-5 flex justify-between items-center"
             >
-              {/* Izquierda */}
               <div className="flex items-start gap-4">
                 <div className="w-[35px] h-[35px] rounded-[8px] border border-[#ccc] bg-[#eee] flex items-center justify-center">
                   🎟️

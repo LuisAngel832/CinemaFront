@@ -21,7 +21,6 @@ export default function ProfilePaymentsPage() {
   return (
     <main className="max-w-[900px] mx-auto px-8 pt-6">
 
-      {/* ---------------- HEADER ---------------- */}
       <div className="flex items-center gap-4 mb-8">
         <div className="w-[90px] h-[90px] rounded-full border-2 border-[#ccc] bg-[#eaeaea]"></div>
 
@@ -30,7 +29,6 @@ export default function ProfilePaymentsPage() {
         </div>
       </div>
 
-      {/* ---------------- TABS ---------------- */}
       <div className="flex gap-4 mb-4">
         <Link
           to="/perfil"
@@ -54,7 +52,6 @@ export default function ProfilePaymentsPage() {
         </Link>
       </div>
 
-      {/* ---------------- LISTA DE TARJETAS ---------------- */}
       <section className="border border-[#ddd] rounded-[12px] bg-white p-6">
         <h3 className="text-[1.1rem] font-semibold m-0">Métodos de Pago</h3>
 
@@ -69,12 +66,10 @@ export default function ProfilePaymentsPage() {
               className="border border-[#ddd] rounded-[10px] bg-white px-4 py-4 flex items-center justify-between"
               key={t.id}
             >
-              {/* Icono tarjeta */}
               <div className="w-[38px] h-[38px] rounded-[8px] border border-[#ccc] bg-[#eee] flex items-center justify-center mr-3">
                 💳
               </div>
 
-              {/* Info tarjeta */}
               <div className="flex-1">
                 <p className="m-0 font-semibold">
                   •••• •••• •••• {t.terminacion}
@@ -84,7 +79,6 @@ export default function ProfilePaymentsPage() {
                 </p>
               </div>
 
-              {/* Acción */}
               <div className="text-right">
                 {t.principal ? (
                   <span className="px-3 py-[0.2rem] border border-[#aaa] rounded-[16px] text-[0.75rem] inline-block">
@@ -101,7 +95,6 @@ export default function ProfilePaymentsPage() {
 
         </div>
 
-        {/* Agregar nueva tarjeta */}
         <button className="mt-4 w-full px-4 py-[0.7rem] border border-[#aaa] rounded-[8px] bg-transparent text-[0.9rem] cursor-pointer">
           + Agregar nueva tarjeta
         </button>

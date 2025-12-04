@@ -1,140 +1,59 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ModalCompraExitosa from "./componentsClient/ModalCompraExitosa";
 
 export default function PagoPage() {
   const [showModal, setShowModal] = useState(false);
 
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
-
-  // 👇 Datos que vienen desde PurchaseSummary (selección de asientos)
-  const location = useLocation();
-  const {
-    total = 0,
-    seatPrice = 0,
-    selectedSeats = [],
-    movieTitle = "Película",
-    hall = "",
-    time = "",
-  } = location.state || {};
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // 🔧 Aquí luego integras tu API de pagos, por ejemplo:
-    // await fetch("/api/pagos", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     total,
-    //     seatPrice,
-    //     seats: selectedSeats,
-    //     movieTitle,
-    //     hall,
-    //     time,
-    //     cardNumber,
-    //     cardName,
-    //     expiry,
-    //     cvv,
-    //   }),
-    // });
-
-    setShowModal(true);
-  };
-
   return (
-    <main className="flex-1 min-h-[80vh] bg-[#f4f5fb]">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10">
-        <Link
-          to="/asientos"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
+    <main className="flex-1 max-w-[680px] mx-auto pt-4 px-8">
+      <div className="w-full">
+        
+        <Link 
+          to="/asientos" 
+          className="bg-none border-none text-[0.95rem] mb-5 cursor-pointer p-0 block w-fit text-left"
         >
-          <span className="mr-1">←</span>
-          Volver a asientos
+          ← Volver a asientos
         </Link>
 
-        <h1 className="text-3xl font-semibold text-gray-900 mb-4">
+        <h1 className="text-left text-[2em] my-4 mb-6">
           Realizar pago
         </h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-7"
-        >
-          {/* Header */}
-          <h3 className="text-[1.05rem] font-semibold text-gray-900 mb-4">
+        <div className="mt-6 p-7 border border-gray-300 bg-white rounded-xl w-full">
+          
+          <h3 className="mt-0 mb-4 text-[1.25rem] font-semibold">
             Método de pago
           </h3>
 
-          <p className="text-sm text-gray-500 mb-3">
-            Selecciona un método
+          <p className="text-[0.9rem] mb-2">
+            Tarjeta de crédito/débito
           </p>
 
-          {/* Opción tarjeta (única funcional) */}
-          <div
-            className="
-              flex items-center justify-between
-              w-full mb-6
-              rounded-lg border border-purple-500
-              bg-purple-50
-              px-4 py-3
-            "
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className="
-                  w-3.5 h-3.5 rounded-full
-                  border border-purple-500 bg-purple-500
-                "
-              />
-              <span className="text-sm text-gray-900">
-                Tarjeta de crédito/débito
-              </span>
-            </div>
+          <div className="flex items-center gap-3 p-3 border-2 border-gray-400 rounded-lg mb-5">
+            <div className="w-[14px] h-[14px] rounded-full border-2 border-black" />
+            <span>Tarjeta de crédito/débito</span>
           </div>
 
-          {/* FORMULARIO TARJETA */}
-          <div className="space-y-4">
-            {/* Número de tarjeta */}
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Número de tarjeta
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#fafafa] text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
-                placeholder="XXXX XXXX XXXX XXXX"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-[0.85rem] mt-1">Número de tarjeta</label>
+            <input 
+              className="w-full p-2 border border-gray-300 rounded-md bg-[#fafafa]" 
+              placeholder="XXXX XXXX XXXX XXXX" 
+            />
 
-            {/* Nombre en la tarjeta */}
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Nombre en la tarjeta
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#fafafa] text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
-                placeholder="Como aparece en la tarjeta"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-              />
-            </div>
+            <label className="text-[0.85rem] mt-2">Nombre en la tarjeta</label>
+            <input 
+              className="w-full p-2 border border-gray-300 rounded-md bg-[#fafafa]" 
+              placeholder="Como aparece en la tarjeta" 
+            />
 
-            {/* Fecha / CVV */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Fecha de expiración
-                </label>
-                <input
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#fafafa] text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
-                  placeholder="MM/AA"
-                  value={expiry}
-                  onChange={(e) => setExpiry(e.target.value)}
+                <label className="text-[0.85rem]">Fecha expiración</label>
+                <input 
+                  className="w-full p-2 border border-gray-300 rounded-md bg-[#fafafa]" 
+                  placeholder="MM/AA" 
                 />
               </div>
 
@@ -152,28 +71,17 @@ export default function PagoPage() {
             </div>
           </div>
 
-          {/* TOTAL */}
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 text-sm text-gray-800">
+          <div className="flex justify-between mt-5 text-[1rem] font-normal">
             <span>Total a pagar:</span>
-            <strong className="text-base">${total}</strong>
+            <strong>$12</strong>
           </div>
-
-          {/* BOTÓN PAGAR */}
           <button
-            type="submit"
-            className="
-              mt-5 w-full py-3
-              rounded-lg
-              bg-purple-600
-              text-white text-sm font-medium
-              hover:bg-purple-700
-              transition
-              focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-1 focus:ring-offset-white
-            "
+            className="mt-5 w-full p-3 border border-black rounded-md bg-none cursor-pointer"
+            onClick={() => setShowModal(true)}
           >
             Pagar ahora
           </button>
-        </form>
+        </div>
 
         {showModal && (
           <ModalCompraExitosa onClose={() => setShowModal(false)} />
