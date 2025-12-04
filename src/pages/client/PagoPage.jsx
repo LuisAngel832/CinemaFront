@@ -58,10 +58,14 @@ export default function PagoPage() {
               </div>
 
               <div>
-                <label className="text-[0.85rem]">CVV</label>
-                <input 
-                  className="w-full p-2 border border-gray-300 rounded-md bg-[#fafafa]" 
-                  placeholder="***" 
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  CVV
+                </label>
+                <input
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#fafafa] text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
+                  placeholder="***"
+                  value={cvv}
+                  onChange={(e) => setCvv(e.target.value)}
                 />
               </div>
             </div>
@@ -86,4 +90,3 @@ export default function PagoPage() {
     </main>
   );
 }
-
