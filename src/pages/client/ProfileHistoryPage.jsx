@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import UserHeader from "./componentsClient/UserHeader";
+import ProfileTabs from "./componentsClient/ProfileTabs";
 
 export default function ProfileHistoryPage() {
   const compras = [
@@ -10,7 +11,7 @@ export default function ProfileHistoryPage() {
       asientos: ["C5", "C6"],
       total: "$24",
       boletos: 2,
-      estado: "completado"
+      estado: "completado",
     },
     {
       titulo: "Viaje Interestelar",
@@ -20,7 +21,7 @@ export default function ProfileHistoryPage() {
       asientos: ["D3", "D4", "D5"],
       total: "$36",
       boletos: 3,
-      estado: "completado"
+      estado: "completado",
     },
     {
       titulo: "El Despertar",
@@ -30,86 +31,54 @@ export default function ProfileHistoryPage() {
       asientos: ["B2", "B3"],
       total: "$24",
       boletos: 2,
-      estado: "completado"
-    }
+      estado: "completado",
+    },
   ];
 
   return (
-    <main className="max-w-[900px] mx-auto flex-1 pt-6 px-8">
-
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-[90px] h-[90px] rounded-full border-2 border-[#ccc] bg-[#eaeaea]" />
-        <div>
-          <h2 className="m-0 text-[1.5rem] font-semibold">Juan Pérez</h2>
-        </div>
-      </div>
-
-      <div className="flex gap-4 mb-4">
-        <Link 
-          to="/perfil" 
-          className="px-4 py-2 border border-[#ccc] rounded-[20px] bg-transparent"
-        >
-          Perfil
-        </Link>
-
-        <Link 
-          to="/historial" 
-          className="px-4 py-2 border-2 border-[#ccc] rounded-[20px] bg-transparent"
-        >
-          Historial
-        </Link>
-
-        <Link 
-          to="/pagos" 
-          className="px-4 py-2 border border-[#ccc] rounded-[20px] bg-transparent"
-        >
-          Pagos
-        </Link>
-      </div>
-
-      <section className="border border-[#ddd] rounded-[12px] bg-white p-6">
-        <h3 className="text-[1.25rem] m-0">Historial de Compras</h3>
-        <p className="mt-[-0.3rem] mb-4 text-[0.9rem] opacity-70 text-left">
-          Tus últimas compras y reservaciones
-        </p>
-
-        <div className="flex flex-col gap-4">
-          {compras.map((item, i) => (
-            <div 
-              key={i} 
-              className="border border-[#ddd] bg-white rounded-[10px] p-4 px-5 flex justify-between items-center"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-[35px] h-[35px] rounded-[8px] border border-[#ccc] bg-[#eee] flex items-center justify-center">
-                  🎟️
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto px-8 pt-10 pb-10">
+        <UserHeader fullName="Juan Pérez" email="juan.perez@email.com" />
+        <ProfileTabs />
+        <section className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-6">
+          <h3 className="text-[1rem] font-semibold text-gray-900 m-0">Historial de Compras</h3>
+          <p className="mt-1 mb-5 text-[0.85rem] text-gray-500">
+            Tus últimas compras y reservaciones
+          </p>
+          <div className="space-y-4">
+            {compras.map((item, i) => (
+              <article
+                key={i}
+                className="flex items-center justify-between px-5 py-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-9 h-9 rounded-lg bg-pink-50 border border-pink-200 flex items-center justify-center text-pink-500 text-lg">
+                    🎟️
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="m-0 font-semibold text-gray-900">{item.titulo}</p>
+                    <p className="m-0 text-[0.8rem] text-gray-500">
+                      {item.sala} • {item.fecha} • {item.hora}
+                    </p>
+                    <p className="m-0 text-[0.8rem] text-gray-500">
+                      Asientos: <span className="font-medium text-gray-800">{item.asientos.join(", ")}</span>
+                    </p>
+                  </div>
                 </div>
-
-                <div>
-                  <p className="m-0 font-semibold">{item.titulo}</p>
-                  <p className="my-[2px] text-[0.85rem] opacity-80">
-                    {item.sala} • {item.fecha} • {item.hora}
-                  </p>
-                  <p className="my-[2px] text-[0.85rem] opacity-80">
-                    Asientos: {item.asientos.join(", ")}
+                <div className="text-right text-xs">
+                  <span className="inline-block px-3 py-1 rounded-full bg-purple-50 text-[0.7rem] font-medium text-purple-600 mb-1 capitalize">
+                    {item.estado}
+                  </span>
+                  <p className="m-0 text-base font-semibold text-gray-900">{item.total}</p>
+                  <p className="m-0 text-[0.75rem] text-gray-500">
+                    {item.boletos} boleto(s)
                   </p>
                 </div>
-              </div>
-
-              {/* Derecha */}
-              <div className="text-right">
-                <span className="inline-block px-2 py-[0.15rem] border border-[#aaa] rounded-[20px] text-[0.75rem] mb-1">
-                  {item.estado}
-                </span>
-                <p className="m-0 font-semibold">{item.total}</p>
-                <p className="m-0 text-[0.8rem] opacity-70">
-                  {item.boletos} boleto(s)
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

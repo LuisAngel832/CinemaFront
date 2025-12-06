@@ -19,7 +19,7 @@ const SeatGrid = ({
         {seatRows.map((row) => (
           <div
             key={row}
-            className="flex items-center gap-4 mb-4 ml-11"
+            className="flex items-center gap-4 mb-5 ml-2"
           >
             <div className="w-6 text-sm text-gray-500 text-right">
               {row}

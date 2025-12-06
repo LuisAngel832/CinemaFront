@@ -2,7 +2,7 @@ import React from "react";
 
 const SeatItem = ({ label, status, onClick }) => {
   const baseClasses = `
-    w-[28px] h-[28px]
+    w-[35px] h-[35px]
     rounded-[6px]
     flex justify-center items-center
     text-white text-[0.8rem]
