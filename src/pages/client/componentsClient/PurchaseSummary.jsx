@@ -14,7 +14,6 @@ const PurchaseSummary = ({
 
   return (
     <aside className="bg-white border border-gray-200 rounded-2xl shadow-md py-5 px-6">
-      {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <div className="w-6 h-6 rounded-full border border-emerald-500 flex items-center justify-center text-emerald-500 text-sm">
           ✔
@@ -26,7 +25,6 @@ const PurchaseSummary = ({
 
       <hr className="border-gray-200 mb-4" />
 
-      {/* Detalles */}
       <div className="space-y-3 text-sm text-gray-700">
         <div>
           <p className="font-semibold mb-0.5">Película</p>
@@ -51,7 +49,6 @@ const PurchaseSummary = ({
         </div>
       </div>
 
-      {/* Totales */}
       <div className="flex justify-between items-center mt-6 mb-4 text-sm font-medium text-gray-700">
         <span>
           {count} × ${seatPrice}
@@ -61,7 +58,6 @@ const PurchaseSummary = ({
         </span>
       </div>
 
-      {/* Botón */}
       <Link
         to={disabled ? "#" : "/pago"}
         state={

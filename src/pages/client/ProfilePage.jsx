@@ -1,81 +1,101 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import UserHeader from "./componentsClient/UserHeader";
+import ProfileTabs from "./componentsClient/ProfileTabs";
 
 export default function ProfilePage() {
+  const [fullName, setFullName] = useState("Juan Pérez");
+  const [email, setEmail] = useState("juan.perez@email.com");
+  const [phone, setPhone] = useState("+52 555 123 4567");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    console.log("Guardando cambios...", { fullName, email, phone });
+    setIsEditing(false);
+  };
+
   return (
-    <main className="max-w-[900px] mx-auto flex-1 px-8 pt-6">
-
-      <div className="flex items-center gap-4 mb-8">
-
-        <div className="w-[90px] h-[90px] rounded-full border-2 border-[#ccc] bg-[#eaeaea]"></div>
-
-        <div className="flex flex-col">
-          <h2 className="text-[1.5rem] m-0">Juan Pérez</h2>
-        </div>
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto px-8 pt-10 pb-6">
+        <UserHeader fullName={fullName} email={email} />
+        <ProfileTabs />
+        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm px-10 py-7">
+          <div className="flex items-start justify-between mb-5">
+            <div>
+              <h3 className="m-0 text-[1.15rem] font-semibold text-gray-900">
+                Información Personal
+              </h3>
+              <p className="mt-1 text-[0.9rem] text-gray-500">
+                Actualiza tu información de contacto
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsEditing((prev) => !prev)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-[0.8rem] font-medium text-gray-700 hover:border-purple-500 hover:text-purple-600 transition"
+            >
+              <span className="text-sm">✏️</span>
+              {isEditing ? "Cancelar" : "Editar"}
+            </button>
+          </div>
+          <form onSubmit={handleSave} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-[0.9rem] font-medium text-gray-600">Nombre completo</label>
+              <div className="flex items-center gap-2.5">
+                <span className="text-gray-400 text-[1.1rem]">👤</span>
+                {isEditing ? (
+                  <input
+                    className="flex-1 px-3.5 py-2.5 border border-gray-300 rounded-md bg-white text-[0.95rem] outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                ) : (
+                  <p className="flex-1 text-[0.95rem] text-gray-800 py-1.5">{fullName}</p>
+                )}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[0.9rem] font-medium text-gray-600">Correo electrónico</label>
+              <div className="flex items-center gap-2.5">
+                <span className="text-gray-400 text-[1.1rem]">📧</span>
+                {isEditing ? (
+                  <input
+                    className="flex-1 px-3.5 py-2.5 border border-gray-300 rounded-md bg-white text-[0.95rem] outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                ) : (
+                  <p className="flex-1 text-[0.95rem] text-gray-800 py-1.5">{email}</p>
+                )}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[0.9rem] font-medium text-gray-600">Teléfono</label>
+              <div className="flex items-center gap-2.5">
+                <span className="text-gray-400 text-[1.1rem]">📞</span>
+                {isEditing ? (
+                  <input
+                    className="flex-1 px-3.5 py-2.5 border border-gray-300 rounded-md bg-white text-[0.95rem] outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                ) : (
+                  <p className="flex-1 text-[0.95rem] text-gray-800 py-1.5">{phone}</p>
+                )}
+              </div>
+            </div>
+            {isEditing && (
+              <button
+                type="submit"
+                className="mt-4 w-full py-3.5 rounded-md bg-purple-600 text-white text-[0.95rem] font-medium hover:bg-purple-700 transition"
+              >
+                Guardar cambios
+              </button>
+            )}
+          </form>
+        </section>
       </div>
-
-      <div className="flex gap-4 mb-4">
-        <Link
-          to="/perfil"
-          className="px-4 py-2 rounded-[20px] border-2 border-[#ccc] bg-transparent"
-        >
-          Perfil
-        </Link>
-
-        <Link
-          to="/historial"
-          className="px-4 py-2 rounded-[20px] border border-[#ccc] bg-transparent"
-        >
-          Historial
-        </Link>
-
-        <Link
-          to="/pagos"
-          className="px-4 py-2 rounded-[20px] border border-[#ccc] bg-transparent"
-        >
-          Pagos
-        </Link>
-      </div>
-
-      <section className="border border-[#ddd] rounded-[12px] bg-white p-6">
-        <h3 className="m-0 text-[1.25rem]">Información Personal</h3>
-        <p className="mt-[-0.3rem] mb-4 text-[0.9rem] opacity-70 text-left">
-          Actualiza tu información de contacto
-        </p>
-
-        <div className="flex flex-col gap-3">
-
-          <label className="text-[0.85rem] mt-2">Nombre completo</label>
-          <div className="flex items-center gap-2">
-            <span className="opacity-70">👤</span>
-            <input
-              className="w-full p-2 border border-[#ccc] rounded-[6px] bg-[#fafafa]"
-              placeholder="Juan Pérez"
-            />
-          </div>
-
-          <label className="text-[0.85rem] mt-3">Correo electrónico</label>
-          <div className="flex items-center gap-2">
-            <span className="opacity-70">📧</span>
-            <input
-              className="w-full p-2 border border-[#ccc] rounded-[6px] bg-[#fafafa]"
-              placeholder="juan.perez@email.com"
-            />
-          </div>
-
-          <label className="text-[0.85rem] mt-3">Teléfono</label>
-          <div className="flex items-center gap-2">
-            <span className="opacity-70">📞</span>
-            <input
-              className="w-full p-2 border border-[#ccc] rounded-[6px] bg-[#fafafa]"
-              placeholder="+52 555 123 4567"
-            />
-          </div>
-
-          <button className="mt-4 w-full py-3 border border-[#333] rounded-[6px] bg-transparent">
-            Guardar cambios
-          </button>
-        </div>
-      </section>
     </main>
   );
 }
+

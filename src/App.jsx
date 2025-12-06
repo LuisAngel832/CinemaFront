@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { useState } from 'react';
@@ -27,7 +26,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-[#f5f5fb]">
           <Navbar setIsTryLogin={setIsTryLogin} />
           {istryLogin ? <LoginPage setIsTryLogin={setIsTryLogin} setIsTryRegister={setIsTryRegister} /> : null}
           {istryRegister ? <RegisterPage setIsTryRegister={setIsTryRegister} /> : null}

@@ -1,105 +1,148 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import UserHeader from "./componentsClient/UserHeader";
+import ProfileTabs from "./componentsClient/ProfileTabs";
+import AddCardModal from "./componentsClient/AddCardModal";
 
 export default function ProfilePaymentsPage() {
-  const tarjetas = [
+  const [metodos, setMetodos] = useState([
     {
       id: 1,
       tipo: "Visa",
       terminacion: "4532",
       vence: "12/26",
-      principal: true
+      principal: true,
+      color: "bg-indigo-600",
     },
     {
       id: 2,
       tipo: "Mastercard",
       terminacion: "8765",
       vence: "08/27",
-      principal: false
-    }
-  ];
+      principal: false,
+      color: "bg-red-500",
+    },
+  ]);
+
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const handleSetPrimary = (id) => {
+    setMetodos((prev) => prev.map((m) => ({ ...m, principal: m.id === id })));
+  };
+
+  const handleDelete = (id) => {
+    setMetodos((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const handleAddCard = () => {
+    setShowAddModal(true);
+  };
+
+  const handleSaveNewCard = (cardData) => {
+    setMetodos((prev) => {
+      const newId = Date.now();
+
+      const newMetodo = {
+        id: newId,
+        tipo: cardData.brand,
+        terminacion: cardData.number.slice(-4),
+        vence: cardData.expiry,
+        principal: prev.length === 0, 
+        color:
+          cardData.brand === "Visa"
+            ? "bg-indigo-600"
+            : cardData.brand === "Mastercard"
+            ? "bg-red-500"
+            : "bg-gray-700",
+      };
+
+
+
+      return [...prev, newMetodo];
+    });
+
+    setShowAddModal(false);
+  };
 
   return (
-    <main className="max-w-[900px] mx-auto px-8 pt-6">
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto px-8 pt-10 pb-10">
+        <UserHeader fullName="Juan Pérez" email="juan.perez@email.com" />
+        <ProfileTabs />
 
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-[90px] h-[90px] rounded-full border-2 border-[#ccc] bg-[#eaeaea]"></div>
+        <section className="bg-white border border-gray-200 rounded-2xl shadow-sm px-6 py-5">
+          <h3 className="text-[1rem] font-semibold text-gray-900 m-0">
+            Métodos de Pago
+          </h3>
+          <p className="mt-1 mb-4 text-[0.85rem] text-gray-500">
+            Administra tus tarjetas y métodos de pago
+          </p>
 
-        <div>
-          <h2 className="text-[1.5rem] m-0">Juan Pérez</h2>
-        </div>
-      </div>
+          <div className="flex flex-col gap-3">
+            {metodos.map((t) => (
+              <div
+                key={t.id}
+                className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-gray-200 bg-white"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`${t.color} w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg`}
+                  >
+                    ▢
+                  </div>
+                  <div className="text-sm">
+                    <p className="m-0 font-semibold text-gray-900">
+                      •••• •••• •••• {t.terminacion}
+                    </p>
+                    <p className="m-0 text-xs text-gray-500">
+                      {t.tipo} - Vence {t.vence}
+                    </p>
+                  </div>
+                </div>
 
-      <div className="flex gap-4 mb-4">
-        <Link
-          to="/perfil"
-          className="px-4 py-2 rounded-[20px] border border-[#ccc] bg-transparent"
-        >
-          Perfil
-        </Link>
+                <div className="text-right text-xs">
+                  {t.principal ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full border border-gray-300 text-[0.7rem] text-gray-700">
+                      Principal
+                    </span>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => handleSetPrimary(t.id)}
+                        className="text-[0.7rem] text-purple-600 hover:text-purple-700"
+                      >
+                        Hacer principal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(t.id)}
+                        className="text-[0.7rem] text-red-500 hover:text-red-600"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
 
-        <Link
-          to="/historial"
-          className="px-4 py-2 rounded-[20px] border border-[#ccc] bg-transparent"
-        >
-          Historial
-        </Link>
-
-        <Link
-          to="/pagos"
-          className="px-4 py-2 rounded-[20px] border-2 border-[#ccc] bg-transparent"
-        >
-          Pagos
-        </Link>
-      </div>
-
-      <section className="border border-[#ddd] rounded-[12px] bg-white p-6">
-        <h3 className="text-[1.1rem] font-semibold m-0">Métodos de Pago</h3>
-
-        <p className="mt-[-0.3rem] mb-4 text-[0.9rem] opacity-70 text-left">
-          Administra tus tarjetas y métodos de pago
-        </p>
-
-        <div className="flex flex-col gap-4">
-
-          {tarjetas.map((t) => (
-            <div
-              className="border border-[#ddd] rounded-[10px] bg-white px-4 py-4 flex items-center justify-between"
-              key={t.id}
+            <button
+              type="button"
+              onClick={handleAddCard}
+              className="mt-2 w-full text-xs sm:text-sm py-2 rounded-lg border border-gray-200 bg-[#f7f7fb] text-gray-600 hover:bg-gray-100 transition"
             >
-              <div className="w-[38px] h-[38px] rounded-[8px] border border-[#ccc] bg-[#eee] flex items-center justify-center mr-3">
-                💳
-              </div>
+              + Agregar nueva tarjeta
+            </button>
+          </div>
+        </section>
+      </div>
 
-              <div className="flex-1">
-                <p className="m-0 font-semibold">
-                  •••• •••• •••• {t.terminacion}
-                </p>
-                <p className="m-0 opacity-75 text-[0.85rem]">
-                  {t.tipo} – Vence {t.vence}
-                </p>
-              </div>
-
-              <div className="text-right">
-                {t.principal ? (
-                  <span className="px-3 py-[0.2rem] border border-[#aaa] rounded-[16px] text-[0.75rem] inline-block">
-                    Principal
-                  </span>
-                ) : (
-                  <button className="bg-transparent border-none cursor-pointer underline text-[0.85rem]">
-                    Eliminar
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-
-        </div>
-
-        <button className="mt-4 w-full px-4 py-[0.7rem] border border-[#aaa] rounded-[8px] bg-transparent text-[0.9rem] cursor-pointer">
-          + Agregar nueva tarjeta
-        </button>
-
-      </section>
+      {showAddModal && (
+        <AddCardModal
+          onClose={() => setShowAddModal(false)}
+          onSave={handleSaveNewCard}
+        />
+      )}
     </main>
   );
 }

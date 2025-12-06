@@ -14,11 +14,6 @@ const FunctionItem = ({ sala, hora, idioma, asientosDisponibles }) => {
           <span>{hora}</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-gray-400 text-base">🌐</span>
-          <span>{idioma}</span>
-        </div>
-
       </div>
 
       <Link

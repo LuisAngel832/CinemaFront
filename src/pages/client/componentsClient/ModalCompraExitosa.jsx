@@ -13,7 +13,7 @@ const ModalCompraExitosa = ({
 
   const handleGoHome = () => {
     if (onClose) onClose();   
-    navigate("/cartelera");            
+    navigate("/");            
   };
 
   return (
@@ -33,10 +33,8 @@ const ModalCompraExitosa = ({
           overflow-hidden
         "
       >
-        {/* Franja superior de color */}
         <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-emerald-400" />
 
-        {/* Botón cerrar */}
         <button
           onClick={onClose}
           className="
@@ -49,7 +47,6 @@ const ModalCompraExitosa = ({
         </button>
 
         <div className="p-6 pb-5">
-          {/* Icono de éxito */}
           <div className="flex justify-center mb-4">
             <div
               className="
@@ -75,7 +72,6 @@ const ModalCompraExitosa = ({
 
           <hr className="my-3" />
 
-          {/* Detalles de la compra */}
           <div className="mb-3 text-[0.9rem] space-y-1.5">
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Película:</strong>{" "}
@@ -99,7 +95,6 @@ const ModalCompraExitosa = ({
             </p>
           </div>
 
-          {/* Total destacado */}
           <div className="mt-2 mb-4">
             <div
               className="
@@ -122,7 +117,6 @@ const ModalCompraExitosa = ({
             El boleto ha sido enviado a tu correo electrónico.
           </p>
 
-          {/* Botón acción */}
           <div className="flex flex-col gap-2">
             <button
               onClick={handleGoHome}
