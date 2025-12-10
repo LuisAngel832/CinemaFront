@@ -1,23 +1,74 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import SeatGrid from "./componentsClient/SeatGrid";
 import PurchaseSummary from "./componentsClient/PurchaseSummary";
+import { getShowtimeDetails } from "../api/userApi";
 
-const SEAT_ROWS = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const OCCUPIED_SEATS = ["A3", "A4", "A5", "C5", "C6", "C7", "D4", "E4", "H9"]; // demo
-const MOVIE_INFO = {
-  title: "La Última Misión",
-  hall: "Sala 1",
-  time: "15:00",
-};
+const SEAT_ROWS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 const SEAT_PRICE = 12;
 
 export default function SeleccionAsientosPage() {
+  const location = useLocation();
+  const {
+    idShowtime,
+    movieTitle: initialMovieTitle,
+    hall: initialHall,
+    time: initialTime,
+  } = location.state || {};
+
+  const [movieTitle, setMovieTitle] = useState(initialMovieTitle || "");
+  const [hall, setHall] = useState(initialHall || "");
+  const [time, setTime] = useState(initialTime || "");
+  const [occupiedSeats, setOccupiedSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const convertMatrixToSeats = (matrix) => {
+    const result = [];
+    for (let rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+      for (let colIndex = 0; colIndex < matrix[rowIndex].length; colIndex++) {
+        if (matrix[rowIndex][colIndex] !== 0) {
+          const rowLetter = String.fromCharCode("A".charCodeAt(0) + rowIndex);
+          const colNumber = colIndex + 1;
+          result.push(`${rowLetter}${colNumber}`);
+        }
+      }
+    }
+    return result;
+  };
+
+  useEffect(() => {
+    if (!idShowtime) return;
+    const fetchDetails = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const res = await getShowtimeDetails(idShowtime);
+        const data = res.data;
+        if (data) {
+          setMovieTitle(data.movieTitle);
+          setHall(data.roomName);
+          const date = new Date(data.showtime);
+          const formatted = date.toLocaleTimeString("es-MX", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setTime(formatted);
+          setOccupiedSeats(convertMatrixToSeats(data.seats));
+        }
+      } catch (err) {
+        console.error(err);
+        setError("No se pudo cargar los asientos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetails();
+  }, [idShowtime]);
 
   const handleToggleSeat = (seatCode) => {
-    if (OCCUPIED_SEATS.includes(seatCode)) return;
-
+    if (occupiedSeats.includes(seatCode)) return;
     setSelectedSeats((prev) =>
       prev.includes(seatCode)
         ? prev.filter((s) => s !== seatCode)
@@ -37,34 +88,34 @@ export default function SeleccionAsientosPage() {
           <span className="mr-1">←</span>
           Volver a funciones
         </Link>
-
         <h1 className="text-3xl font-semibold text-gray-900 mb-2">
           Selecciona tus asientos
         </h1>
-
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-8 items-start w-full">
-          <div className="lg:pl-16">
-            <SeatGrid
-              seatRows={SEAT_ROWS}
-              occupiedSeats={OCCUPIED_SEATS}
+        {loading && <p className="text-gray-600 text-sm">Cargando asientos...</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {!loading && !error && (
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-8 items-start w-full">
+            <div className="lg:pl-16">
+              <SeatGrid
+                seatRows={SEAT_ROWS}
+                occupiedSeats={occupiedSeats}
+                selectedSeats={selectedSeats}
+                onToggleSeat={handleToggleSeat}
+                columns={8}
+              />
+            </div>
+            <PurchaseSummary
+              idShowtime={idShowtime}
+              movieTitle={movieTitle}
+              hall={hall}
+              time={time}
               selectedSeats={selectedSeats}
-              onToggleSeat={handleToggleSeat}
+              seatPrice={SEAT_PRICE}
+              total={total}
             />
           </div>
-
-          <PurchaseSummary
-            movieTitle={MOVIE_INFO.title}
-            hall={MOVIE_INFO.hall}
-            time={MOVIE_INFO.time}
-            selectedSeats={selectedSeats}
-            seatPrice={SEAT_PRICE}
-            total={total}
-          />
-        </div>
-
-
+        )}
       </div>
     </main>
   );
 }
-
