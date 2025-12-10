@@ -1,17 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserHeader from "./componentsClient/UserHeader";
 import ProfileTabs from "./componentsClient/ProfileTabs";
+import {
+  getUserProfile,
+  updateUserProfile,
+} from "../api/userApi";
 
 export default function ProfilePage() {
-  const [fullName, setFullName] = useState("Juan Pérez");
-  const [email, setEmail] = useState("juan.perez@email.com");
-  const [phone, setPhone] = useState("+52 555 123 4567");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSave = (e) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setError("");
+        const res = await getUserProfile();
+        const data = res.data;
+        if (data) {
+          setFullName(data.fullName || "");
+          setEmail(data.email || "");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("No se pudo cargar tu perfil.");
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const validateEmail = (emailValue) => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i;
+    return re.test(String(emailValue).toLowerCase());
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    console.log("Guardando cambios...", { fullName, email, phone });
-    setIsEditing(false);
+    setError("");
+    if (!fullName.trim()) {
+      setError("El nombre completo no puede estar vacío.");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError("El correo electrónico no es válido.");
+      return;
+    }
+    try {
+      await updateUserProfile({ fullName: fullName.trim(), email: email.trim() });
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo guardar tu perfil.");
+    }
   };
 
   return (
@@ -22,12 +64,8 @@ export default function ProfilePage() {
         <section className="bg-white border border-gray-200 rounded-2xl shadow-sm px-10 py-7">
           <div className="flex items-start justify-between mb-5">
             <div>
-              <h3 className="m-0 text-[1.15rem] font-semibold text-gray-900">
-                Información Personal
-              </h3>
-              <p className="mt-1 text-[0.9rem] text-gray-500">
-                Actualiza tu información de contacto
-              </p>
+              <h3 className="m-0 text-[1.15rem] font-semibold text-gray-900">Información Personal</h3>
+              <p className="mt-1 text-[0.9rem] text-gray-500">Actualiza tu información de contacto</p>
             </div>
             <button
               type="button"
@@ -69,21 +107,6 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[0.9rem] font-medium text-gray-600">Teléfono</label>
-              <div className="flex items-center gap-2.5">
-                <span className="text-gray-400 text-[1.1rem]">📞</span>
-                {isEditing ? (
-                  <input
-                    className="flex-1 px-3.5 py-2.5 border border-gray-300 rounded-md bg-white text-[0.95rem] outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                ) : (
-                  <p className="flex-1 text-[0.95rem] text-gray-800 py-1.5">{phone}</p>
-                )}
-              </div>
-            </div>
             {isEditing && (
               <button
                 type="submit"
@@ -92,10 +115,10 @@ export default function ProfilePage() {
                 Guardar cambios
               </button>
             )}
+            {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
           </form>
         </section>
       </div>
     </main>
   );
 }
-

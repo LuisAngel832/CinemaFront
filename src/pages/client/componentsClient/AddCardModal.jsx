@@ -5,19 +5,63 @@ export default function AddCardModal({ onClose, onSave }) {
   const [number, setNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
-  const [brand, setBrand] = useState("Visa");
+
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!holder.trim()) {
+      newErrors.holder = "Ingresa el nombre tal como aparece en la tarjeta.";
+    }
+
+    const cleanNumber = number.replace(/\D/g, "");
+    if (!/^\d{16}$/.test(cleanNumber)) {
+      newErrors.number = "El número de tarjeta debe tener 16 dígitos.";
+    }
+
+    if (!/^\d{3}$/.test(cvv)) {
+      newErrors.cvv = "El CVV debe tener 3 dígitos.";
+    }
+
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+      newErrors.expiry = "Usa el formato MM/AA.";
+    } else {
+      const [mmStr, yyStr] = expiry.split("/");
+      const mm = Number(mmStr);
+      const yy = Number(yyStr);
+
+      if (Number.isNaN(mm) || Number.isNaN(yy) || mm < 1 || mm > 12) {
+        newErrors.expiry = "La fecha de expiración no es válida.";
+      } else {
+        const now = new Date();
+        const currentYear = now.getFullYear() % 100;
+        const currentMonth = now.getMonth() + 1;
+
+        if (yy < currentYear || (yy === currentYear && mm < currentMonth)) {
+          newErrors.expiry = "La tarjeta ya está vencida.";
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!holder || !number || !expiry || !cvv) return;
+    if (!validateForm()) {
+      return;
+    }
+
+    const cleanNumber = number.replace(/\D/g, "");
 
     onSave({
-      holder,
-      number,
+      holder: holder.trim(),
+      number: cleanNumber,
       expiry,
       cvv,
-      brand,
     });
   };
 
@@ -46,25 +90,6 @@ export default function AddCardModal({ onClose, onSave }) {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-1">
             <label className="text-xs font-medium text-gray-600">
-              Tipo de tarjeta
-            </label>
-            <select
-              className="
-                w-full rounded-md border border-gray-300
-                bg-white px-3 py-2 text-sm
-                outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
-              "
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-            >
-              <option value="Visa">Visa</option>
-              <option value="Mastercard">Mastercard</option>
-              <option value="American Express">American Express</option>
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">
               Nombre en la tarjeta
             </label>
             <input
@@ -77,6 +102,11 @@ export default function AddCardModal({ onClose, onSave }) {
               value={holder}
               onChange={(e) => setHolder(e.target.value)}
             />
+            {errors.holder && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.holder}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1">
@@ -93,6 +123,11 @@ export default function AddCardModal({ onClose, onSave }) {
               value={number}
               onChange={(e) => setNumber(e.target.value)}
             />
+            {errors.number && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.number}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -110,6 +145,11 @@ export default function AddCardModal({ onClose, onSave }) {
                 value={expiry}
                 onChange={(e) => setExpiry(e.target.value)}
               />
+              {errors.expiry && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.expiry}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -126,6 +166,11 @@ export default function AddCardModal({ onClose, onSave }) {
                 value={cvv}
                 onChange={(e) => setCvv(e.target.value)}
               />
+              {errors.cvv && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.cvv}
+                </p>
+              )}
             </div>
           </div>
 

@@ -5,6 +5,7 @@ const SeatGrid = ({
   occupiedSeats,
   selectedSeats,
   onToggleSeat,
+  columns = 10,
 }) => {
   return (
     <div className="flex flex-col items-center">
@@ -19,14 +20,14 @@ const SeatGrid = ({
         {seatRows.map((row) => (
           <div
             key={row}
-            className="flex items-center gap-4 mb-5 ml-2"
+            className="flex items-center gap-4 mb-5 ml-13"
           >
             <div className="w-6 text-sm text-gray-500 text-right">
               {row}
             </div>
 
             <div className="flex gap-2 flex-wrap">
-              {Array.from({ length: 10 }).map((_, index) => {
+              {Array.from({ length: columns }).map((_, index) => {
                 const seatCode = `${row}${index + 1}`;
 
                 let status = "disponible";

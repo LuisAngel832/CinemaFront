@@ -3,18 +3,24 @@ import { useNavigate } from "react-router-dom";
 
 const ModalCompraExitosa = ({
   onClose,
-  movieTitle = "La Última Misión",
-  hall = "1",
-  seats = ["E9"],
-  folio = "CP - 2025 - 0856",
-  total = 12,
+  movieTitle,
+  hall,
+  seats,
+  folio,
+  total,
 }) => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    if (onClose) onClose();   
-    navigate("/");            
+    if (onClose) onClose();
+    navigate("/");
   };
+
+  const safeSeats = Array.isArray(seats)
+    ? seats
+    : seats
+    ? [seats]
+    : [];
 
   return (
     <div
@@ -75,23 +81,27 @@ const ModalCompraExitosa = ({
           <div className="mb-3 text-[0.9rem] space-y-1.5">
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Película:</strong>{" "}
-              <span className="text-gray-700">{movieTitle}</span>
+              <span className="text-gray-700">
+                {movieTitle || "Película"}
+              </span>
             </p>
             <p className="my-[0.15rem] flex items-center gap-1.5">
               <strong className="text-gray-800">Sala:</strong>
               <span className="inline-flex items-center px-2 py-[0.1rem] rounded-full bg-gray-100 text-gray-700 text-[0.8rem]">
-                {hall}
+                {hall || "SALA"}
               </span>
             </p>
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Asientos:</strong>{" "}
               <span className="text-gray-700">
-                {Array.isArray(seats) ? seats.join(", ") : seats}
+                {safeSeats.length > 0 ? safeSeats.join(", ") : "—"}
               </span>
             </p>
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Folio:</strong>{" "}
-              <span className="text-gray-700">{folio}</span>
+              <span className="text-gray-700">
+                {folio || "—"}
+              </span>
             </p>
           </div>
 
@@ -108,7 +118,7 @@ const ModalCompraExitosa = ({
                 Total pagado
               </span>
               <span className="text-[1.1rem] font-semibold text-purple-700">
-                ${total}
+                ${typeof total === "number" ? total.toFixed(2) : (total || "0.00")}
               </span>
             </div>
           </div>
