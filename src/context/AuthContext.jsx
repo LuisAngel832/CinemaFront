@@ -8,13 +8,15 @@ export function AuthProvider({ children }) {
   const isLogged = !!user; 
 
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(JSON.stringify(userData));
+    localStorage.setItem("token", userData.token);
+    localStorage.setItem("user", userData.role);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   useEffect(() => {

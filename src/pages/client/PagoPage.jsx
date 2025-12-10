@@ -5,7 +5,7 @@ import {
   getCards,
   saveCard,
   createPurchase,
-} from "../api/userApi";
+} from "../../api/UserApi.js";
 
 export default function PagoPage() {
   const [showModal, setShowModal] = useState(false);

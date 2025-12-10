@@ -6,7 +6,7 @@ import {
   getCards,
   saveCard,
   deleteCard,
-} from "../api/userApi";
+} from "../../api/UserApi.js";
 
 export default function ProfilePaymentsPage() {
   const [metodos, setMetodos] = useState([]);

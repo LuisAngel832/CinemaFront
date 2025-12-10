@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from './Cliente.js';
 
 export const getMovies = () => {
   return apiClient.get('/movies');

@@ -29,7 +29,7 @@ function App() {
         <div className="min-h-screen flex flex-col bg-[#f5f5fb]">
           <Navbar setIsTryLogin={setIsTryLogin} />
           {istryLogin ? <LoginPage setIsTryLogin={setIsTryLogin} setIsTryRegister={setIsTryRegister} /> : null}
-          {istryRegister ? <RegisterPage setIsTryRegister={setIsTryRegister} /> : null}
+          {istryRegister ? <RegisterPage setIsTryRegister={setIsTryRegister} setIsTryLogin={setIsTryLogin} /> : null}
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<CarteleraPage />} />

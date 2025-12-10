@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MovieCard from "./componentsClient/MovieCard";
-import { getMovies } from "../api/userApi";
+import { getMovies } from "../../api/UserApi.js";
 
 export default function CarteleraPage() {
   const [movies, setMovies] = useState([]);

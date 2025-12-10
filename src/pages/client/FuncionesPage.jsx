@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import FunctionItem from "./componentsClient/FunctionItem";
-import { getShowtimesByMovie } from "../api/userApi";
+import { getShowtimesByMovie } from "../../api/UserApi.js";
 
 export default function FuncionesPage() {
   const location = useLocation();

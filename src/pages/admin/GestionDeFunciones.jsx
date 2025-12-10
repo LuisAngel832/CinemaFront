@@ -8,6 +8,8 @@ import Editar from "./components/Editar";
 import Eliminar from "./components/Eliminar";
 import Agregar from "./components/AgregarFuncion";
 import AgregarPelicula from "./components/AgregarPelicula";
+import AdminHeader from "./components/AdminHeader";
+
 
 const GestionDeFunciones = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -30,44 +32,7 @@ const GestionDeFunciones = () => {
       {isAdding && <Agregar setIsAdding={isAddingFunc} />}
       {isAddingPelicula && <AgregarPelicula setIsAdding={isAddingPeliculaFunc} />}
 
-      <header className="mb-6">
-        <h1 className="text-[1.8rem] font-semibold mb-1">
-          Panel de administración
-        </h1>
-        <p className="text-sm text-black/70">
-          Gestiona las funciones y el catálogo de películas del cine.
-        </p>
-
-        <div className="flex gap-3 mt-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab("funciones")}
-            className={`px-4 py-2 rounded-[20px] border text-sm transition-colors
-              ${
-                activeTab === "funciones"
-                  ? "bg-black text-white border-black"
-                  : "bg-transparent border-[#ccc] text-gray-700 hover:bg-gray-100"
-              }
-            `}
-          >
-            Gestión de funciones
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("peliculas")}
-            className={`px-4 py-2 rounded-[20px] border text-sm transition-colors
-              ${
-                activeTab === "peliculas"
-                  ? "bg-black text-white border-black"
-                  : "bg-transparent border-[#ccc] text-gray-700 hover:bg-gray-100"
-              }
-            `}
-          >
-            Gestión de películas
-          </button>
-        </div>
-      </header>
+      <AdminHeader setActiveTab={setActiveTab} activeTab={activeTab} />
 
       {activeTab === "funciones" && (
         <>
@@ -94,42 +59,7 @@ const GestionDeFunciones = () => {
             </button>
           </div>
 
-          <section className="w-full overflow-hidden rounded-2xl shadow-md border border-gray-200 bg-white mb-6">
-            <table className="w-full border-collapse text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    #
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Película
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Sala
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Hora
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Idioma
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Tipo
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600 uppercase tracking-wide text-xs">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-gray-100">
-                <TableRow setIsEditing={isEditingFunc} setDelete={isDeletingFunc} />
-                <TableRow setIsEditing={isEditingFunc} setDelete={isDeletingFunc} />
-                <TableRow setIsEditing={isEditingFunc} setDelete={isDeletingFunc} />
-                <TableRow setIsEditing={isEditingFunc} setDelete={isDeletingFunc} />
-              </tbody>
-            </table>
-          </section>
+          
 
           <div className="flex w-full justify-end mb-6">
             <button

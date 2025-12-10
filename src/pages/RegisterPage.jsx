@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
+import {signupUser as signup} from "../api/AuthUser.js";
 
-export default function RegisterPage({ setIsTryRegister }) {
+export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function RegisterPage({ setIsTryRegister }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!nombre || !email || !password || !password2) {
+    if (!nombre || !email || !password ) {
       setError("Por favor, completa todos los campos");
       return;
     }
@@ -24,23 +24,16 @@ export default function RegisterPage({ setIsTryRegister }) {
       return;
     }
 
-    if (password !== password2) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-
-    console.log("Intento de registro:", {
-      nombre,
-      email,
-      password,
-    });
-
-    // Si todo sale bien:
-    setError("");
-    // Cerrar modal (si lo controlas desde el padre)
-    if (setIsTryRegister) setIsTryRegister(false);
-    // Redirigir al login
-    navigate("/");
+    signup({ fullName: nombre, email, password })
+      .then((response) => {
+        console.log("Usuario registrado:", response.data);
+        setError("");
+        if (setIsTryRegister) setIsTryRegister(false);
+        if (setIsTryLogin) setIsTryLogin(true);
+      })
+      .catch((err) => {
+        setError(err.response?.data?.message || "Error al registrar");
+      });
   };
 
   return (
@@ -140,27 +133,7 @@ export default function RegisterPage({ setIsTryRegister }) {
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="password2"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirmar contraseña
-            </label>
-            <input
-              id="password2"
-              type="password"
-              value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-              className="
-                mt-1 block w-full
-                px-4 py-2
-                border border-gray-300 rounded-md
-                focus:outline-none focus:ring-2 focus:ring-black
-              "
-              placeholder="********"
-            />
-          </div>
+          
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
@@ -178,12 +151,16 @@ export default function RegisterPage({ setIsTryRegister }) {
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="mt-4 text-center ">
+          <p className="text-sm text-gray-600 flex justify-center">
             ¿Ya tienes cuenta?{" "}
-            <Link to="/" className="text-black hover:underline">
+            <p  className="text-black hover:underline cursor-pointer"
+            onClick={()=>{
+              setIsTryRegister(false);
+              setIsTryLogin(true);
+            }}>
               Inicia sesión
-            </Link>
+            </p>
           </p>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SeatGrid from "./componentsClient/SeatGrid";
 import PurchaseSummary from "./componentsClient/PurchaseSummary";
-import { getShowtimeDetails } from "../api/userApi";
+import { getShowtimeDetails } from "../../api/UserApi.js";
 
 const SEAT_ROWS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 const SEAT_PRICE = 12;

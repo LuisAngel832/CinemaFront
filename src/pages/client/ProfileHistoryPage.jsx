@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import UserHeader from "./componentsClient/UserHeader";
 import ProfileTabs from "./componentsClient/ProfileTabs";
-import { getMyPurchases } from "../api/userApi";
+import { getMyPurchases } from "../../api/UserApi.js";
 
 export default function ProfileHistoryPage() {
   const [compras, setCompras] = useState([]);

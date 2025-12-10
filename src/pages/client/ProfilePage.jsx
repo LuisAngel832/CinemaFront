@@ -4,7 +4,7 @@ import ProfileTabs from "./componentsClient/ProfileTabs";
 import {
   getUserProfile,
   updateUserProfile,
-} from "../api/userApi";
+} from "../../api/UserApi.js";
 
 export default function ProfilePage() {
   const [fullName, setFullName] = useState("");
