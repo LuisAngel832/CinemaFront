@@ -2,10 +2,12 @@ import { LuTicket } from "react-icons/lu";
 import { LuLogIn } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { CiLogin } from "react-icons/ci";
+
 
 
 const Navbar = ({setIsTryLogin}) => {
-  const {islogged, logout} = useAuth();
+  const {isLogged, logout} = useAuth();
   return (
     <nav className="bg-black/90 p-4 text-white flex justify-between items-center">
       <div className="flex gap-10 items-center ml-10">
@@ -17,7 +19,7 @@ const Navbar = ({setIsTryLogin}) => {
         </Link>
 
         {
-          islogged && (
+          isLogged && (
             <Link to="/perfil">
               <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
                 Mi cuenta
@@ -27,7 +29,7 @@ const Navbar = ({setIsTryLogin}) => {
         }
       </div>
 
-      {islogged ? (
+      {isLogged ? (
         
         <div className="flex gap-5">
         <Link to="/gestion-funciones">
@@ -38,9 +40,10 @@ const Navbar = ({setIsTryLogin}) => {
 
           
           <button
-            className="text-black font-bold text-1xl bg-white text-center p-2.5 px-7.5 rounded-2xl transition hover:cursor-pointer"
-            
+            className="text-white font-bold text-1xl flex items-center gap-1.5 bg-red-500 text-center p-2.5 px-7.5 rounded-2xl transition hover:cursor-pointer"
+            onClick={() => logout()}
           >
+            <CiLogin  className="text-2xl "/>
             Log Out
           </button>
         </div>

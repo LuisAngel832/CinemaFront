@@ -18,6 +18,7 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import Footer from './components/Footer.jsx';
 
 import './App.css';
+import AdminRoute from './components/AdminRoute.jsx';
 
 function App() {
   const [istryLogin, setIsTryLogin] = useState(false);
@@ -34,7 +35,7 @@ function App() {
             <Routes>
               <Route path="/" element={<CarteleraPage />} />
                         
-              <Route path="/gestion-funciones" element={<GestionDeFunciones />} />
+              <Route path="/gestion-funciones" element={<AdminRoute> {<GestionDeFunciones/>} </AdminRoute>}/>
               
               <Route path="/funciones" element={<FuncionesPage />} />
               <Route path="/asientos" element={<SeleccionAsientosPage />} />

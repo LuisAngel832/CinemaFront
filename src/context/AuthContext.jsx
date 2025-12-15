@@ -5,12 +5,17 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  const isLogged = !!user; 
+  const isLogged = !!user;
+  const isAdmin = user?.role === "ADMIN"; 
 
   const login = (userData) => {
-    setUser(JSON.stringify(userData));
-    localStorage.setItem("token", userData.token);
-    localStorage.setItem("user", userData.role);
+    setUser(userData);
+
+    if (userData?.token) {
+      localStorage.setItem("token", userData.token);
+    }
+
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -21,13 +26,19 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("user");
-    if (saved) {
-      setUser(JSON.parse(saved));
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved);
+      setUser(parsed);
+    } catch (err) {
+      console.warn("Valor inválido en localStorage para 'user', limpiando...", err);
+      localStorage.removeItem("user");
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLogged, login, logout }}>
+    <AuthContext.Provider value={{ user, isLogged, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
