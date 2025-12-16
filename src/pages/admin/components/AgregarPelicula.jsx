@@ -11,6 +11,20 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
   });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.title) newErrors.title = "El título es obligatorio.";
+    if (!formData.genre) newErrors.genre = "El género es obligatorio.";
+    if (!formData.durationTime) newErrors.durationTime = "La duración es obligatoria.";
+    if (formData.price === "") newErrors.price = "El precio es obligatorio.";
+    if (!formData.language) newErrors.language = "El idioma es obligatorio.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +36,11 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
           ? (value === "" ? "" : Number(value))
           : value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+    if (submitError) setSubmitError(null);
   };
 
   const handleFileChange = (e) => {
@@ -33,7 +52,7 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
     let duration = null;
 
     if (formData.durationTime) {
-      duration = `${formData.durationTime}:00`; // LocalTime "HH:mm:ss"
+      duration = `${formData.durationTime}:00`; 
     }
 
     return {
@@ -47,6 +66,10 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!validate()) return;
+
     try {
       setLoading(true);
 
@@ -57,6 +80,7 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
       onCancel();
     } catch (err) {
       console.error("Error al crear película", err);
+      setSubmitError("Hubo un error al guardar la película. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -64,14 +88,14 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
 
   return (
     <div className="z-10 top-0 left-0 w-screen h-screen fixed bg-black/50 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl border border-black/10 p-8 w-[90%] max-w-md">
+      <div className="bg-white rounded-2xl shadow-2xl border border-black/10 p-8 w-[90%] max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-semibold mb-2">Agregar película</h2>
         <p className="text-black/70 mb-4">
           Registra una nueva película en el catálogo.
         </p>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          {/* Título */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+         
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Título
@@ -81,21 +105,20 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.title ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
               placeholder="Ej: Capitán America, el primer vengador"
-              required
             />
+            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
           </div>
 
-          {/* Género */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Género
@@ -105,21 +128,20 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
               name="genre"
               value={formData.genre}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.genre ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
               placeholder="Ej: Acción, Terror, Comedia"
-              required
             />
+            {errors.genre && <p className="text-red-500 text-xs mt-1">{errors.genre}</p>}
           </div>
 
-          {/* Duración */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Duración (HH:mm)
@@ -129,20 +151,20 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
               name="durationTime"
               value={formData.durationTime}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.durationTime ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
+              placeholder="Ej: 02:30"
             />
+            {errors.durationTime && <p className="text-red-500 text-xs mt-1">{errors.durationTime}</p>}
           </div>
 
-          {/* Precio */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Precio
@@ -154,21 +176,20 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
               step="0.01"
               value={formData.price}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.price ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
               placeholder="Ej: 75.00"
-              required
             />
+            {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
           </div>
 
-          {/* Idioma */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
@@ -178,33 +199,37 @@ const AgregarPelicula = ({ onCancel, onCreated }) => {
               name="language"
               value={formData.language}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.language ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
               placeholder="Ej: Español LAT"
-              required
             />
+            {errors.language && <p className="text-red-500 text-xs mt-1">{errors.language}</p>}
           </div>
 
-          {/* Póster */}
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1 ">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Póster (opcional)
             </label>
             <input
-              
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="block w-full text-xs text-blue-600 cursor-pointer "
+              className="block w-full text-xs text-blue-600 cursor-pointer"
             />
           </div>
+
+          {submitError && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200">
+              {submitError}
+            </div>
+          )}
 
           <div className="flex gap-3 mt-4">
             <button
