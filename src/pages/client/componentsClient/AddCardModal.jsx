@@ -8,6 +8,31 @@ export default function AddCardModal({ onClose, onSave }) {
 
   const [errors, setErrors] = useState({});
 
+  const onlyDigits = (v = "") => String(v).replace(/\D/g, "");
+
+  const formatCardNumber = (value) => {
+    const digits = onlyDigits(value).slice(0, 16);
+    return digits.replace(/(.{4})/g, "$1 ").trim();
+  };
+
+  const formatExpiry = (value) => {
+    const digits = onlyDigits(value).slice(0, 4);
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  };
+
+  const handleNumberChange = (e) => {
+    setNumber(formatCardNumber(e.target.value));
+  };
+
+  const handleExpiryChange = (e) => {
+    setExpiry(formatExpiry(e.target.value));
+  };
+
+  const handleCvvChange = (e) => {
+    setCvv(onlyDigits(e.target.value).slice(0, 3));
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -15,7 +40,7 @@ export default function AddCardModal({ onClose, onSave }) {
       newErrors.holder = "Ingresa el nombre tal como aparece en la tarjeta.";
     }
 
-    const cleanNumber = number.replace(/\D/g, "");
+    const cleanNumber = onlyDigits(number);
     if (!/^\d{16}$/.test(cleanNumber)) {
       newErrors.number = "El número de tarjeta debe tener 16 dígitos.";
     }
@@ -51,11 +76,9 @@ export default function AddCardModal({ onClose, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
-    const cleanNumber = number.replace(/\D/g, "");
+    const cleanNumber = onlyDigits(number);
 
     onSave({
       holder: holder.trim(),
@@ -101,11 +124,10 @@ export default function AddCardModal({ onClose, onSave }) {
               placeholder="Como aparece en la tarjeta"
               value={holder}
               onChange={(e) => setHolder(e.target.value)}
+              autoComplete="cc-name"
             />
             {errors.holder && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.holder}
-              </p>
+              <p className="mt-1 text-xs text-red-500">{errors.holder}</p>
             )}
           </div>
 
@@ -119,36 +141,38 @@ export default function AddCardModal({ onClose, onSave }) {
                 bg-[#fafafa] px-3 py-2 text-sm
                 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
               "
-              placeholder="XXXX XXXX XXXX XXXX"
+              placeholder="1234 5678 9012 3456"
               value={number}
-              onChange={(e) => setNumber(e.target.value)}
+              onChange={handleNumberChange}
+              inputMode="numeric"
+              autoComplete="cc-number"
+              maxLength={19}
             />
             {errors.number && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.number}
-              </p>
+              <p className="mt-1 text-xs text-red-500">{errors.number}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-600">
                 Fecha de expiración
               </label>
               <input
                 className="
-                  w-full rounded-md border border-gray-300
-                  bg-[#fafafa] px-3 py-2 text-sm
-                  outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
-                "
+        w-full rounded-md border border-gray-300
+        bg-[#fafafa] px-3 py-2 text-sm
+        outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
+      "
                 placeholder="MM/AA"
                 value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
+                onChange={handleExpiryChange}
+                inputMode="numeric"
+                autoComplete="cc-exp"
+                maxLength={5}
               />
               {errors.expiry && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.expiry}
-                </p>
+                <p className="mt-1 text-xs text-red-500">{errors.expiry}</p>
               )}
             </div>
 
@@ -158,21 +182,23 @@ export default function AddCardModal({ onClose, onSave }) {
               </label>
               <input
                 className="
-                  w-full rounded-md border border-gray-300
-                  bg-[#fafafa] px-3 py-2 text-sm
-                  outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
-                "
-                placeholder="***"
+        w-full rounded-md border border-gray-300
+        bg-[#fafafa] px-3 py-2 text-sm
+        outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
+      "
+                placeholder="123"
                 value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
+                onChange={handleCvvChange}
+                inputMode="numeric"
+                autoComplete="cc-csc"
+                maxLength={3}
               />
               {errors.cvv && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.cvv}
-                </p>
+                <p className="mt-1 text-xs text-red-500">{errors.cvv}</p>
               )}
             </div>
           </div>
+
 
           <div className="mt-3 flex justify-end gap-3">
             <button

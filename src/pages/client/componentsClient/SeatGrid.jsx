@@ -9,24 +9,17 @@ const SeatGrid = ({
 }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-[520px] flex flex-col items-center mb-4">
+      <div className="w-full max-w-[520px] flex flex-col items-center mb-4 px-2">
         <div className="w-full h-[3px] bg-gray-200 rounded-full mb-2" />
-        <div className="text-xs tracking-[0.25em] text-gray-500">
-          PANTALLA
-        </div>
+        <div className="text-xs tracking-[0.25em] text-gray-500">PANTALLA</div>
       </div>
 
-      <div className="w-[520px]">
+      <div className="w-full max-w-[520px] px-2">
         {seatRows.map((row) => (
-          <div
-            key={row}
-            className="flex items-center gap-4 mb-5 ml-13"
-          >
-            <div className="w-6 text-sm text-gray-500 text-right">
-              {row}
-            </div>
+          <div key={row} className="flex items-center gap-4 mb-5 ml-13">
+            <div className="w-6 text-sm text-gray-500 text-right">{row}</div>
 
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
               {Array.from({ length: columns }).map((_, index) => {
                 const seatCode = `${row}${index + 1}`;
 

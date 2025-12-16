@@ -16,11 +16,7 @@ const ModalCompraExitosa = ({
     navigate("/");
   };
 
-  const safeSeats = Array.isArray(seats)
-    ? seats
-    : seats
-    ? [seats]
-    : [];
+  const safeSeats = Array.isArray(seats) ? seats : seats ? [seats] : [];
 
   return (
     <div
@@ -32,7 +28,7 @@ const ModalCompraExitosa = ({
     >
       <div
         className="
-          w-[380px] bg-white
+          w-full max-w-[380px] mx-4 bg-white
           rounded-[16px] border border-[#ddd]
           shadow-xl
           relative
@@ -81,9 +77,7 @@ const ModalCompraExitosa = ({
           <div className="mb-3 text-[0.9rem] space-y-1.5">
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Película:</strong>{" "}
-              <span className="text-gray-700">
-                {movieTitle || "Película"}
-              </span>
+              <span className="text-gray-700">{movieTitle || "Película"}</span>
             </p>
             <p className="my-[0.15rem] flex items-center gap-1.5">
               <strong className="text-gray-800">Sala:</strong>
@@ -99,9 +93,7 @@ const ModalCompraExitosa = ({
             </p>
             <p className="my-[0.15rem]">
               <strong className="text-gray-800">Folio:</strong>{" "}
-              <span className="text-gray-700">
-                {folio || "—"}
-              </span>
+              <span className="text-gray-700">{folio || "—"}</span>
             </p>
           </div>
 
@@ -114,11 +106,12 @@ const ModalCompraExitosa = ({
                 bg-purple-50
               "
             >
-              <span className="text-[0.9rem] text-gray-700">
-                Total pagado
-              </span>
+              <span className="text-[0.9rem] text-gray-700">Total pagado</span>
               <span className="text-[1.1rem] font-semibold text-purple-700">
-                ${typeof total === "number" ? total.toFixed(2) : (total || "0.00")}
+                $
+                {typeof total === "number"
+                  ? total.toFixed(2)
+                  : total || "0.00"}
               </span>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MovieCard from "./componentsClient/MovieCard";
-import { getMovies } from "../../api/UserApi.js";
+import { getAllMovies } from "../../api/UserApi";
 
 export default function CarteleraPage() {
   const [movies, setMovies] = useState([]);
@@ -12,12 +12,21 @@ export default function CarteleraPage() {
       try {
         setLoading(true);
         setError("");
-        const res = await getMovies();
-        const data = res.data || [];
-        const adapted = data.map((m) => ({
+
+        const res = await getAllMovies();
+        const raw = res?.data;
+
+        const list = Array.isArray(raw) ? raw : raw?.data || raw?.content || [];
+
+        const adapted = list.map((m) => ({
           ...m,
-          imageUrl: m.posterPath,
+          id: m.id ?? m.idMovie ?? m.id_movie ?? m.id_movie,
+          title: m.title ?? m.name ?? m.movieTitle ?? "",
+          genre: m.genre ?? "",
+          duration: m.duration ?? m.durationMinutes ?? m.length ?? "",
+          imageUrl: m.posterPath ?? m.imageUrl ?? m.poster ?? m.image ?? "",
         }));
+
         setMovies(adapted);
       } catch (err) {
         console.error(err);
@@ -26,6 +35,7 @@ export default function CarteleraPage() {
         setLoading(false);
       }
     };
+
     fetchMovies();
   }, []);
 
@@ -35,12 +45,16 @@ export default function CarteleraPage() {
         <h1 className="text-3xl font-semibold text-gray-900 mb-6">
           Cartelera
         </h1>
-        {loading && <p className="text-center text-gray-600">Cargando cartelera...</p>}
+
+        {loading && (
+          <p className="text-center text-gray-600">Cargando cartelera...</p>
+        )}
         {error && <p className="text-center text-red-500">{error}</p>}
+
         {!loading && !error && (
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+            {movies.map((movie, idx) => (
+              <MovieCard key={movie.id ?? idx} movie={movie} />
             ))}
           </section>
         )}
