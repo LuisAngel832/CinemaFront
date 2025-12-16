@@ -4,10 +4,14 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { CiLogin } from "react-icons/ci";
 
-
-
 const Navbar = ({setIsTryLogin}) => {
-  const {isLogged, logout} = useAuth();
+  const { isLogged, logout, isAdmin } = useAuth();
+  
+  const buttonClass = "font-bold text-center p-2.5 px-7.5 rounded-2xl transition hover:cursor-pointer";
+  const loginButtonClass = `flex items-center gap-1 text-1xl text-white bg-purple-600 hover:scale-105 ${buttonClass}`;
+  const adminButtonClass = `text-black bg-white hover:bg-gray-200 ${buttonClass}`;
+  const logoutButtonClass = `text-white flex items-center gap-1.5 bg-red-500 hover:bg-red-600 ${buttonClass}`;
+
   return (
     <nav className="bg-black/90 p-4 text-white flex justify-between items-center">
       <div className="flex gap-10 items-center ml-10">
@@ -18,43 +22,42 @@ const Navbar = ({setIsTryLogin}) => {
           </div>
         </Link>
 
-        {
-          isLogged && (
-            <Link to="/perfil">
-              <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
-                Mi cuenta
-              </button>
+        {isLogged && (
+          <Link to="/perfil">
+            <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
+              Mi cuenta
+            </button>
           </Link>
-          )
-        }
+        )}
       </div>
 
-      {isLogged ? (
-        
-        <div className="flex gap-5">
-        <Link to="/gestion-funciones">
-          <button className="text-black font-bold  bg-white text-center p-2.5 px-7.5 rounded-2xl  hover:cursor-pointer">
-           Administrar
-          </button>
-        </Link>
+      <div className="flex gap-5">
+        {isLogged && isAdmin && (
+          <Link to="/gestion-funciones">
+            <button className={adminButtonClass}>
+              Administrar
+            </button>
+          </Link>
+        )}
 
-          
+        {isLogged ? (
           <button
-            className="text-white font-bold text-1xl flex items-center gap-1.5 bg-red-500 text-center p-2.5 px-7.5 rounded-2xl transition hover:cursor-pointer"
+            className={logoutButtonClass}
             onClick={() => logout()}
           >
-            <CiLogin  className="text-2xl "/>
+            <CiLogin className="text-2xl" />
             Log Out
           </button>
-        </div>
-      ) : 
-      (
-        <button className="flex items-center gap-1 text-1xl text-white font-bold text-1xl bg-purple-600 text-center p-2.5 px-7.5 rounded-2xl   hover:scale-105 transition hover:cursor-pointer"
-        onClick={() => setIsTryLogin(true)}>
-          <LuLogIn />
-          Log In
-        </button>
-      )}
+        ) : (
+          <button
+            className={loginButtonClass}
+            onClick={() => setIsTryLogin(true)}
+          >
+            <LuLogIn />
+            Log In
+          </button>
+        )}
+      </div>
     </nav>
   );
 };

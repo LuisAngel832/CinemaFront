@@ -20,9 +20,6 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
         }
         loginUser({ email, password })
             .then((response) => {
-                console.log('Usuario logueado:', response.data);
-                console.log('Token:', response.data.token);
-                console.log('User:', response.data.role);
 
                 login(response.data);
 
