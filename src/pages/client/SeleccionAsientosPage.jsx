@@ -4,11 +4,14 @@ import SeatGrid from "./componentsClient/SeatGrid";
 import PurchaseSummary from "./componentsClient/PurchaseSummary";
 import { getShowtimeDetails } from "../../api/UserApi";
 
-const SEAT_PRICE = 12;
-
 export default function SeleccionAsientosPage() {
   const location = useLocation();
-  const { idShowtime, movieTitle: initTitle, hall: initHall, time: initTime } = location.state || {};
+  const {
+    idShowtime,
+    movieTitle: initTitle,
+    hall: initHall,
+    time: initTime,
+  } = location.state || {};
 
   const [movieTitle, setMovieTitle] = useState(initTitle || "");
   const [hall, setHall] = useState(initHall || "");
@@ -17,6 +20,7 @@ export default function SeleccionAsientosPage() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [seatRows, setSeatRows] = useState([]);
   const [columns, setColumns] = useState(8);
+  const [seatPrice, setSeatPrice] = useState(0); // ✅ precio real desde backend
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -61,13 +65,17 @@ export default function SeleccionAsientosPage() {
               : ""
           );
 
+          // ✅ Precio real por asiento desde backend (ShowtimeDetails.priceSeats)
+          const backendPrice =
+            data.priceSeats ?? data.seatPrice ?? data.price ?? 0;
+          const numericPrice = Number(backendPrice);
+          setSeatPrice(Number.isFinite(numericPrice) ? numericPrice : 0);
+
           // Matriz de 0/1 del backend
           const matrix = Array.isArray(data.seats) ? data.seats : [];
-          // Número de filas y columnas reales
           const rowCount = matrix.length;
           const colCount = matrix[0]?.length || 0;
 
-          // Generar etiquetas de filas dinámicamente (A, B, ...)
           setSeatRows(
             Array.from({ length: rowCount }, (_, i) =>
               String.fromCharCode("A".charCodeAt(0) + i)
@@ -86,6 +94,7 @@ export default function SeleccionAsientosPage() {
     };
 
     fetchDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idShowtime]);
 
   const handleToggleSeat = (code) => {
@@ -95,7 +104,7 @@ export default function SeleccionAsientosPage() {
     );
   };
 
-  const total = selectedSeats.length * SEAT_PRICE;
+  const total = Number((selectedSeats.length * (Number(seatPrice) || 0)).toFixed(2));
 
   return (
     <main className="flex-1 min-h-[80vh] bg-[#f4f5fb]">
@@ -131,7 +140,7 @@ export default function SeleccionAsientosPage() {
               hall={hall}
               time={time}
               selectedSeats={selectedSeats}
-              seatPrice={SEAT_PRICE}
+              seatPrice={seatPrice}
               total={total}
             />
           </div>

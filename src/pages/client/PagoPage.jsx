@@ -23,6 +23,7 @@ export default function PagoPage() {
   const [suggestedCard, setSuggestedCard] = useState(null);
 
   const [folio, setFolio] = useState("");
+  const [paidTotal, setPaidTotal] = useState(null); // ✅ total real del backend
 
   const location = useLocation();
   const {
@@ -34,6 +35,14 @@ export default function PagoPage() {
     hall = "",
     time = "",
   } = location.state || {};
+
+  const parseMoney = (value) => {
+    if (typeof value === "number") return value;
+    const num = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(num) ? num : 0;
+  };
+
+  const totalNumber = parseMoney(total);
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -47,29 +56,36 @@ export default function PagoPage() {
     fetchCards();
   }, []);
 
-  // =========================
-  // Input masking helpers
-  // =========================
   const onlyDigits = (v = "") => String(v).replace(/\D/g, "");
 
-  // 16 dígitos máx, con espacios cada 4 (ej: 1234 5678 9012 3456)
   const formatCardNumber = (value) => {
     const digits = onlyDigits(value).slice(0, 16);
     return digits.replace(/(.{4})/g, "$1 ").trim();
   };
 
-  // MM/AA con "/" automático. Máx 4 dígitos internos => 5 chars con slash
   const formatExpiry = (value) => {
     const digits = onlyDigits(value).slice(0, 4);
     if (digits.length <= 2) return digits;
     return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   };
 
+  // ✅ VALIDACIÓN: solo letras (incluye acentos/ñ) y espacios. No dígitos ni signos/puntos.
+  const sanitizeCardName = (value = "") =>
+    value
+      .replace(/[^\p{L}\s]/gu, "")
+      .replace(/\s+/g, " ")
+      .trimStart();
+
+  const handleCardNameChange = (e) => {
+    const sanitized = sanitizeCardName(e.target.value);
+    setCardName(sanitized);
+  };
+
   const handleCardNumberChange = (e) => {
     const formatted = formatCardNumber(e.target.value);
     setCardNumber(formatted);
 
-    const clean = onlyDigits(formatted); // 0..16 dígitos
+    const clean = onlyDigits(formatted);
     if (clean.length >= 4) {
       const found = savedCards.find((card) =>
         String(card.cardNumber || "").startsWith(clean)
@@ -91,7 +107,7 @@ export default function PagoPage() {
   const handleApplySuggestedCard = () => {
     if (!suggestedCard) return;
     setCardNumber(formatCardNumber(suggestedCard.cardNumber));
-    setCardName(suggestedCard.cardOwner);
+    setCardName(sanitizeCardName(suggestedCard.cardOwner || ""));
     setExpiry(formatExpiry(suggestedCard.expirationDate));
     setSuggestedCard(null);
   };
@@ -100,7 +116,7 @@ export default function PagoPage() {
     const newErrors = {};
 
     if (!cardName.trim()) {
-      newErrors.cardName = "Ingresa el nombre tal como aparece en la tarjeta.";
+      newErrors.cardName = "Ingresa el nombre del titular de la tarjeta.";
     }
 
     const cleanNumber = onlyDigits(cardNumber);
@@ -140,14 +156,12 @@ export default function PagoPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Convierte códigos de asiento (A1, B3) a posiciones [fila, columna] 0-indexadas
   const seatCodeToIndex = (code) => {
     const row = code.charCodeAt(0) - "A".charCodeAt(0);
     const col = parseInt(code.slice(1), 10) - 1;
     return [row, col];
   };
 
-  // Convierte la matriz de 0/1 del backend en una lista de códigos "A1", etc.
   const convertMatrixToCodes = (matrix) => {
     const result = [];
     if (!Array.isArray(matrix)) return result;
@@ -207,11 +221,17 @@ export default function PagoPage() {
 
       await createPurchase({ idShowtime, seats: seatsConverted });
 
+      // ✅ Traer el folio y el total REAL (totalAmount) para el modal
       try {
         const purchasesRes = await getMyPurchases();
         const list = purchasesRes?.data || [];
-        const last = list[list.length - 1];
+
+        const last = [...list]
+          .sort((a, b) => (Number(a?.id) || 0) - (Number(b?.id) || 0))
+          .pop();
+
         if (last?.folio) setFolio(last.folio);
+        if (last?.totalAmount != null) setPaidTotal(parseMoney(last.totalAmount));
       } catch (e2) {
         console.error(e2);
       }
@@ -223,7 +243,9 @@ export default function PagoPage() {
       try {
         const res = await getShowtimeDetails(idShowtime);
         const occupiedNow = convertMatrixToCodes(res?.data?.seats || []);
-        const alreadyOccupied = selectedSeats.every((code) => occupiedNow.includes(code));
+        const alreadyOccupied = selectedSeats.every((code) =>
+          occupiedNow.includes(code)
+        );
         if (alreadyOccupied) {
           setShowModal(true);
           return;
@@ -249,7 +271,9 @@ export default function PagoPage() {
           <span className="mr-1">←</span>Volver a asientos
         </Link>
 
-        <h1 className="text-3xl font-semibold text-gray-900 mb-4">Realizar pago</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 mb-4">
+          Realizar pago
+        </h1>
 
         <form
           onSubmit={handleSubmit}
@@ -258,9 +282,7 @@ export default function PagoPage() {
           <h3 className="text-[1.05rem] font-semibold text-gray-900 mb-4">
             Método de pago
           </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Selecciona un método
-          </p>
+          <p className="text-sm text-gray-500 mb-3">Selecciona un método</p>
 
           <div className="flex items-center justify-between w-full mb-6 rounded-lg border border-purple-500 bg-purple-50 px-4 py-3">
             <div className="flex items-center gap-3">
@@ -312,9 +334,9 @@ export default function PagoPage() {
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#fafafa] text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400"
-                placeholder="Como aparece en la tarjeta"
+                placeholder="Nombre Del Titular De La Tarjeta"
                 value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
+                onChange={handleCardNameChange}
                 autoComplete="cc-name"
               />
               {errors.cardName && (
@@ -359,7 +381,6 @@ export default function PagoPage() {
                 )}
               </div>
             </div>
-
           </div>
 
           <div className="mt-4 flex items-center gap-2">
@@ -370,14 +391,17 @@ export default function PagoPage() {
               checked={saveCardFlag}
               onChange={(e) => setSaveCardFlag(e.target.checked)}
             />
-            <label htmlFor="save-card" className="text-xs text-gray-600 select-none">
+            <label
+              htmlFor="save-card"
+              className="text-xs text-gray-600 select-none"
+            >
               Guardar esta tarjeta para futuros pagos
             </label>
           </div>
 
           <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 text-sm text-gray-800">
             <span>Total a pagar:</span>
-            <strong className="text-base">${total}</strong>
+            <strong className="text-base">${totalNumber.toFixed(2)}</strong>
           </div>
 
           <button
@@ -399,7 +423,7 @@ export default function PagoPage() {
             hall={hall}
             seats={selectedSeats}
             folio={folio}
-            total={total}
+            total={paidTotal ?? totalNumber}
           />
         )}
       </div>

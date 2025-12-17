@@ -18,6 +18,12 @@ const ModalCompraExitosa = ({
 
   const safeSeats = Array.isArray(seats) ? seats : seats ? [seats] : [];
 
+  const formatMoney = (value) => {
+    if (typeof value === "number" && Number.isFinite(value)) return value.toFixed(2);
+    const num = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(num) ? num.toFixed(2) : "0.00";
+  };
+
   return (
     <div
       className="
@@ -108,10 +114,7 @@ const ModalCompraExitosa = ({
             >
               <span className="text-[0.9rem] text-gray-700">Total pagado</span>
               <span className="text-[1.1rem] font-semibold text-purple-700">
-                $
-                {typeof total === "number"
-                  ? total.toFixed(2)
-                  : total || "0.00"}
+                ${formatMoney(total)}
               </span>
             </div>
           </div>

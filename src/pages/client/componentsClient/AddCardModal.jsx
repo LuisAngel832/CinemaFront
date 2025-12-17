@@ -21,6 +21,17 @@ export default function AddCardModal({ onClose, onSave }) {
     return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   };
 
+  // ✅ MISMA VALIDACIÓN: solo letras (incluye acentos/ñ) y espacios. No dígitos ni signos/puntos.
+  const sanitizeHolder = (value = "") =>
+    value
+      .replace(/[^\p{L}\s]/gu, "") // quita números y caracteres especiales
+      .replace(/\s+/g, " ") // colapsa espacios múltiples
+      .trimStart(); // evita espacios al inicio
+
+  const handleHolderChange = (e) => {
+    setHolder(sanitizeHolder(e.target.value));
+  };
+
   const handleNumberChange = (e) => {
     setNumber(formatCardNumber(e.target.value));
   };
@@ -37,7 +48,7 @@ export default function AddCardModal({ onClose, onSave }) {
     const newErrors = {};
 
     if (!holder.trim()) {
-      newErrors.holder = "Ingresa el nombre tal como aparece en la tarjeta.";
+      newErrors.holder = "Ingresa el nombre del titular de la tarjeta.";
     }
 
     const cleanNumber = onlyDigits(number);
@@ -121,9 +132,9 @@ export default function AddCardModal({ onClose, onSave }) {
                 bg-[#fafafa] px-3 py-2 text-sm
                 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400
               "
-              placeholder="Como aparece en la tarjeta"
+              placeholder="Nombre Del Titular De La Tarjeta"
               value={holder}
-              onChange={(e) => setHolder(e.target.value)}
+              onChange={handleHolderChange}
               autoComplete="cc-name"
             />
             {errors.holder && (
@@ -177,9 +188,7 @@ export default function AddCardModal({ onClose, onSave }) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-600">
-                CVV
-              </label>
+              <label className="text-xs font-medium text-gray-600">CVV</label>
               <input
                 className="
         w-full rounded-md border border-gray-300
@@ -198,7 +207,6 @@ export default function AddCardModal({ onClose, onSave }) {
               )}
             </div>
           </div>
-
 
           <div className="mt-3 flex justify-end gap-3">
             <button
