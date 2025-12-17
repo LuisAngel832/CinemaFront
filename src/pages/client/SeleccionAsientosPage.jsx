@@ -20,11 +20,10 @@ export default function SeleccionAsientosPage() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [seatRows, setSeatRows] = useState([]);
   const [columns, setColumns] = useState(8);
-  const [seatPrice, setSeatPrice] = useState(0); // ✅ precio real desde backend
+  const [seatPrice, setSeatPrice] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Convierte la matriz de asientos (0/1) a códigos "A1", "B3", etc.
   const convertMatrixToCodes = (matrix) => {
     const result = [];
     if (!Array.isArray(matrix)) return result;
@@ -65,13 +64,10 @@ export default function SeleccionAsientosPage() {
               : ""
           );
 
-          // ✅ Precio real por asiento desde backend (ShowtimeDetails.priceSeats)
-          const backendPrice =
-            data.priceSeats ?? data.seatPrice ?? data.price ?? 0;
+          const backendPrice = data.priceSeats ?? data.seatPrice ?? data.price ?? 0;
           const numericPrice = Number(backendPrice);
           setSeatPrice(Number.isFinite(numericPrice) ? numericPrice : 0);
 
-          // Matriz de 0/1 del backend
           const matrix = Array.isArray(data.seats) ? data.seats : [];
           const rowCount = matrix.length;
           const colCount = matrix[0]?.length || 0;
@@ -94,7 +90,6 @@ export default function SeleccionAsientosPage() {
     };
 
     fetchDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idShowtime]);
 
   const handleToggleSeat = (code) => {
@@ -104,7 +99,9 @@ export default function SeleccionAsientosPage() {
     );
   };
 
-  const total = Number((selectedSeats.length * (Number(seatPrice) || 0)).toFixed(2));
+  const total = Number(
+    (selectedSeats.length * (Number(seatPrice) || 0)).toFixed(2)
+  );
 
   return (
     <main className="flex-1 min-h-[80vh] bg-[#f4f5fb]">
@@ -124,8 +121,8 @@ export default function SeleccionAsientosPage() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         {!loading && !error && (
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-8 items-start w-full">
-            <div className="lg:pl-16">
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] gap-8 items-start w-full">
+            <div className="lg:pl-16 min-w-0">
               <SeatGrid
                 seatRows={seatRows}
                 occupiedSeats={occupiedSeats}
@@ -134,15 +131,18 @@ export default function SeleccionAsientosPage() {
                 columns={columns}
               />
             </div>
-            <PurchaseSummary
-              idShowtime={idShowtime}
-              movieTitle={movieTitle}
-              hall={hall}
-              time={time}
-              selectedSeats={selectedSeats}
-              seatPrice={seatPrice}
-              total={total}
-            />
+
+            <div className="min-w-0">
+              <PurchaseSummary
+                idShowtime={idShowtime}
+                movieTitle={movieTitle}
+                hall={hall}
+                time={time}
+                selectedSeats={selectedSeats}
+                seatPrice={seatPrice}
+                total={total}
+              />
+            </div>
           </div>
         )}
       </div>
