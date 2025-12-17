@@ -13,6 +13,12 @@ const PurchaseSummary = ({
   const seatsText = count === 0 ? "Ninguno" : selectedSeats.join(", ");
   const disabled = count === 0;
 
+  const safeSeatPrice = Number(seatPrice);
+  const seatPriceText = Number.isFinite(safeSeatPrice) ? safeSeatPrice.toFixed(2) : "0.00";
+
+  const safeTotal = Number(total);
+  const totalText = Number.isFinite(safeTotal) ? safeTotal.toFixed(2) : "0.00";
+
   return (
     <aside className="bg-white border border-gray-200 rounded-2xl shadow-md py-5 px-6">
       <div className="flex items-center gap-2 mb-4">
@@ -42,8 +48,8 @@ const PurchaseSummary = ({
       </div>
 
       <div className="flex justify-between items-center mt-6 mb-4 text-sm font-medium text-gray-700">
-        <span>{count} × ${seatPrice}</span>
-        <span className="text-lg font-semibold text-gray-900">${total}</span>
+        <span>{count} × ${seatPriceText}</span>
+        <span className="text-lg font-semibold text-gray-900">${totalText}</span>
       </div>
 
       <Link
@@ -53,8 +59,8 @@ const PurchaseSummary = ({
             ? null
             : {
                 idShowtime,
-                total,
-                seatPrice,
+                total: Number(totalText),
+                seatPrice: Number(seatPriceText),
                 selectedSeats,
                 movieTitle,
                 hall,
