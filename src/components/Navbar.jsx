@@ -11,8 +11,7 @@ const Navbar = ({ setIsTryLogin }) => {
   const loginButtonClass =
     `flex items-center gap-1 text-1xl text-white bg-purple-600 hover:scale-105 ` +
     buttonClass;
-  const adminButtonClass =
-    `text-black bg-white hover:bg-gray-200 ` + buttonClass;
+  const adminButtonClass = `text-black bg-white hover:bg-gray-200 ` + buttonClass;
   const logoutButtonClass =
     `text-white flex items-center gap-1.5 bg-red-500 hover:bg-red-600 ` +
     buttonClass;
@@ -41,9 +40,7 @@ const Navbar = ({ setIsTryLogin }) => {
       <div className="flex gap-5">
         {isLogged && isAdmin && (
           <Link to="/gestion-funciones">
-            <button className={adminButtonClass}>
-              Administrar
-            </button>
+            <button className={adminButtonClass}>Administrar</button>
           </Link>
         )}
 
@@ -52,17 +49,14 @@ const Navbar = ({ setIsTryLogin }) => {
             className={logoutButtonClass}
             onClick={() => {
               logout();
-              if (setIsTryLogin) setIsTryLogin(true);
+              if (setIsTryLogin) setIsTryLogin(false); 
             }}
           >
             <CiLogin className="text-2xl" />
             Log Out
           </button>
         ) : (
-          <button
-            className={loginButtonClass}
-            onClick={() => setIsTryLogin(true)}
-          >
+          <button className={loginButtonClass} onClick={() => setIsTryLogin(true)}>
             <LuLogIn />
             Log In
           </button>

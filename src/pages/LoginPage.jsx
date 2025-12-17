@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import { loginUser } from "../api/AuthUser.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -10,6 +10,7 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,7 +30,11 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
         if (response.data?.role === "ADMIN") {
           navigate("/gestion-funciones");
         } else {
-          navigate("/");
+          if (location.pathname === "/pago") {
+            navigate("/pago", { replace: true, state: location.state });
+          } else {
+            navigate("/");
+          }
         }
       })
       .catch((err) => {
@@ -56,7 +61,10 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
         <div className="flex justify-end font-bold text-2xl">
           <AiOutlineClose
             className="cursor-pointer"
-            onClick={() => setIsTryLogin(false)}
+            onClick={() => {
+              setIsTryLogin(false);
+              if (location.pathname === "/pago") navigate(-1);
+            }}
           />
         </div>
 
