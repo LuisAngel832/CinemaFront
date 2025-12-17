@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/AuthUser.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -8,40 +8,33 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-        if (!email || !password) {
-            setError('Por favor, completa todos los campos');
-            return;
-        }
-        loginUser({ email, password })
-            .then((response) => {
+    if (!email || !password) {
+      setError("Por favor, completa todos los campos");
+      return;
+    }
 
-    loginUser({ email, password })
-      .then((response) => {
-        login(response.data);
+    try {
+      const response = await loginUser({ email, password });
 
-        setError("");
-        setIsTryLogin(false);
+      login(response.data);
+      setError("");
+      setIsTryLogin(false);
 
-        if (response.data?.role === "ADMIN") {
-          navigate("/gestion-funciones");
-        } else {
-          if (location.pathname === "/pago") {
-            navigate("/pago", { replace: true, state: location.state });
-          } else {
-            navigate("/");
-          }
-        }
-      })
-      .catch((err) => {
-        setError(err.response?.data?.message || "Error al iniciar sesión");
-      });
+      // aquí decides a dónde lo mandas, por ejemplo a la cartelera
+      navigate("/cartelera");
+    } catch (err) {
+      console.error("Error al iniciar sesión:", err);
+      setError(
+        err.response?.data?.message || "Error al iniciar sesión"
+      );
+    }
   };
 
   return (
@@ -60,20 +53,19 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
           shadow-2xl border border-black/10
         "
       >
-        <div className="flex justify-end font-bold text-2xl">
+        <div className="relative left-[95%] font-bold text-2xl">
           <AiOutlineClose
             className="cursor-pointer"
-            onClick={() => {
-              setIsTryLogin(false);
-              if (location.pathname === "/pago") navigate(-1);
-            }}
+            onClick={() => setIsTryLogin(false)}
           />
         </div>
 
         <h1 className="text-3xl font-bold text-center text-black">
           Iniciar sesión
         </h1>
-        <p className="mt-2 text-center text-gray-600">Accede a tu cuenta</p>
+        <p className="mt-2 text-center text-gray-600">
+          Accede a tu cuenta
+        </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
@@ -120,7 +112,11 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
             />
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-500">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -139,7 +135,7 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             ¿No tienes cuenta?{" "}
-            <a
+            <span
               className="text-black hover:underline cursor-pointer"
               onClick={() => {
                 setIsTryLogin(false);
@@ -147,7 +143,7 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
               }}
             >
               Regístrate
-            </a>
+            </span>
           </p>
         </div>
       </div>
