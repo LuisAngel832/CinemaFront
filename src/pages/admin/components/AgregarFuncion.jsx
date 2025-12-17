@@ -14,7 +14,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
 
   const [loading, setLoading] = useState(false);
 
-  // Cargar películas y salas al abrir el modal
   useEffect(() => {
     getAllMovies()
       .then((res) => {
@@ -43,7 +42,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
     }));
   };
 
-  // Construimos el body que espera el back (ShowtimeRequest + languaje)
   const buildPayload = () => {
     const baseDate = new Date();
 
@@ -68,9 +66,9 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
       const payload = buildPayload();
       await createShowtime(payload);
 
-      onCreated && onCreated(); // para refrescar la tabla en el padre
+      onCreated && onCreated(); 
       loadingShowtimes()
-      setIsAdding();            // cerramos el modal (usa tu toggle)
+      setIsAdding();            
     } catch (err) {
       console.error("Error al crear función", err);
     } finally {
@@ -79,7 +77,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   };
 
   const handleCancel = () => {
-    setIsAdding(); // tu prop es un toggle, así que solo lo llamamos
+    setIsAdding(); 
   };
 
   return (
@@ -91,7 +89,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
         </p>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          {/* Película */}
+         
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Película
@@ -119,8 +117,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               ))}
             </select>
           </div>
-
-          {/* Sala */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Sala
@@ -149,7 +145,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
             </select>
           </div>
 
-          {/* Hora */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Hora
@@ -172,7 +167,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
             />
           </div>
 
-          {/* Idioma / Lenguaje */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
