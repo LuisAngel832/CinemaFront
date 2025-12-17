@@ -1,39 +1,33 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
-import { loginUser } from "../api/AuthUser.js";
-import { useAuth } from "../context/AuthContext.jsx";
+import { signupUser } from "../api/AuthUser.js";
 
-export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
+export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    if (!nombre || !email || !password) {
       setError("Por favor, completa todos los campos");
       return;
     }
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
 
-    loginUser({ email, password })
-      .then((response) => {
-        login(response.data);
-
+    signupUser({ fullName: nombre, email, password })
+      .then(() => {
         setError("");
-        setIsTryLogin(false);
-
-        if (response.data?.role === "ADMIN") {
-          navigate("/gestion-funciones");
-        } else {
-          navigate("/");
-        }
+        if (setIsTryRegister) setIsTryRegister(false);
+        if (setIsTryLogin) setIsTryLogin(true);
       })
       .catch((err) => {
-        setError(err.response?.data?.message || "Error al iniciar sesión");
+        setError(err.response?.data?.message || "Error al registrar");
       });
   };
 
@@ -56,16 +50,40 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
         <div className="flex justify-end font-bold text-2xl">
           <AiOutlineClose
             className="cursor-pointer"
-            onClick={() => setIsTryLogin(false)}
+            onClick={() => setIsTryRegister && setIsTryRegister(false)}
           />
         </div>
 
         <h1 className="text-3xl font-bold text-center text-black">
-          Iniciar sesión
+          Crear cuenta
         </h1>
-        <p className="mt-2 text-center text-gray-600">Accede a tu cuenta</p>
+        <p className="mt-2 text-center text-gray-600">
+          Regístrate para comenzar
+        </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label
+              htmlFor="nombre"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nombre completo
+            </label>
+            <input
+              id="nombre"
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              className="
+                mt-1 block w-full
+                px-4 py-2
+                border border-gray-300 rounded-md
+                focus:outline-none focus:ring-2 focus:ring-black
+              "
+              placeholder="Tu nombre"
+            />
+          </div>
+
           <div>
             <label
               htmlFor="email"
@@ -122,22 +140,22 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
               focus:outline-none focus:ring-2 focus:ring-black
             "
           >
-            Iniciar sesión
+            Crear cuenta
           </button>
         </form>
 
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
-            ¿No tienes cuenta?{" "}
-            <a
+          <p className="text-sm text-gray-600 flex justify-center">
+            ¿Ya tienes cuenta?{" "}
+            <span
               className="text-black hover:underline cursor-pointer"
               onClick={() => {
-                setIsTryLogin(false);
-                setIsTryRegister(true);
+                if (setIsTryRegister) setIsTryRegister(false);
+                if (setIsTryLogin) setIsTryLogin(true);
               }}
             >
-              Regístrate
-            </a>
+              Inicia sesión
+            </span>
           </p>
         </div>
       </div>
