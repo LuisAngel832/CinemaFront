@@ -12,6 +12,8 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
     language: "",
   });
 
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,19 +22,26 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
         const data = res.data || res || [];
         setMovies(Array.isArray(data) ? data : []);
       })
-      .catch((err) => {
-        console.error("Error al cargar películas", err);
-      });
+      .catch((err) => console.error(err));
 
     getAllRooms()
       .then((res) => {
         const data = res.data || res || [];
         setRooms(Array.isArray(data) ? data : []);
       })
-      .catch((err) => {
-        console.error("Error al cargar salas", err);
-      });
+      .catch((err) => console.error(err));
   }, []);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.movieId) newErrors.movieId = "La película es obligatoria.";
+    if (!formData.roomId) newErrors.roomId = "La sala es obligatoria.";
+    if (!formData.time) newErrors.time = "La hora es obligatoria.";
+    if (!formData.language) newErrors.language = "El idioma es obligatorio.";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,11 +49,15 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
       ...prev,
       [name]: value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+    if (apiError) setApiError(null);
   };
 
   const buildPayload = () => {
     const baseDate = new Date();
-
     if (formData.time) {
       const [hours, minutes] = formData.time.split(":");
       baseDate.setHours(Number(hours), Number(minutes), 0, 0);
@@ -60,9 +73,12 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError(null);
+    
+    if (!validate()) return;
+
     try {
       setLoading(true);
-
       const payload = buildPayload();
       await createShowtime(payload);
 
@@ -70,7 +86,9 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
       loadingShowtimes()
       setIsAdding();            
     } catch (err) {
-      console.error("Error al crear función", err);
+      console.error(err);
+      const message = err.response?.data?.message || "Ocurrió un error al guardar la función. Inténtalo de nuevo.";
+      setApiError(message);
     } finally {
       setLoading(false);
     }
@@ -98,16 +116,15 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               name="movieId"
               value={formData.movieId}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.movieId ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             >
               <option value="">Selecciona una película</option>
               {movies.map((movie) => (
@@ -116,6 +133,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
                 </option>
               ))}
             </select>
+            {errors.movieId && <p className="text-red-500 text-xs mt-1">{errors.movieId}</p>}
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -125,24 +143,24 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               name="roomId"
               value={formData.roomId}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.roomId ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             >
               <option value="">Selecciona una sala</option>
               {rooms.map((room) => (
                 <option key={room.idRoom} value={room.idRoom}>
-                  {room.name} {/* Ej: SALA 1 */}
+                  {room.name}
                 </option>
               ))}
             </select>
+            {errors.roomId && <p className="text-red-500 text-xs mt-1">{errors.roomId}</p>}
           </div>
 
           <div>
@@ -154,17 +172,17 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.time ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
           </div>
 
           <div>
@@ -175,16 +193,15 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               name="language"
               value={formData.language}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.language ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             >
               <option value="">Selecciona un idioma</option>
               <option value="ESPAÑOL_LAT">Español LAT</option>
@@ -192,9 +209,8 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
               <option value="INGLES_SUB">Inglés SUB</option>
               <option value="INGLES_LAT">Inglés LAT</option>
             </select>
+            {errors.language && <p className="text-red-500 text-xs mt-1">{errors.language}</p>}
           </div>
-
-         
 
           <div className="flex gap-3 mt-6">
             <button

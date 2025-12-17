@@ -2,11 +2,12 @@ import React from "react";
 
 const SeatItem = ({ label, status, onClick }) => {
   const baseClasses = `
-    w-[35px] h-[35px]
+    w-[clamp(24px,6.5vw,35px)] h-[clamp(24px,6.5vw,35px)]
     rounded-[6px]
     flex justify-center items-center
-    text-white text-[0.8rem]
+    text-white text-[clamp(0.7rem,2vw,0.8rem)]
     transition
+    shrink-0
   `;
 
   let statusClasses = "";
