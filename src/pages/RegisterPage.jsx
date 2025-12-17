@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
-import {signupUser as signup} from "../api/AuthUser.js";
+import { signupUser } from "../api/AuthUser.js";
 
 export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
   const [nombre, setNombre] = useState("");
@@ -9,24 +8,20 @@ export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!nombre || !email || !password ) {
+    if (!nombre || !email || !password) {
       setError("Por favor, completa todos los campos");
       return;
     }
-
     if (password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
-    signup({ fullName: nombre, email, password })
-      .then((response) => {
-        console.log("Usuario registrado:", response.data);
+    signupUser({ fullName: nombre, email, password })
+      .then(() => {
         setError("");
         if (setIsTryRegister) setIsTryRegister(false);
         if (setIsTryLogin) setIsTryLogin(true);
@@ -52,7 +47,7 @@ export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
           shadow-2xl border border-black/10
         "
       >
-        <div className="relative left-[95%] font-bold text-2xl">
+        <div className="flex justify-end font-bold text-2xl">
           <AiOutlineClose
             className="cursor-pointer"
             onClick={() => setIsTryRegister && setIsTryRegister(false)}
@@ -133,8 +128,6 @@ export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
             />
           </div>
 
-          
-
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <button
@@ -151,16 +144,18 @@ export default function RegisterPage({ setIsTryRegister, setIsTryLogin }) {
           </button>
         </form>
 
-        <div className="mt-4 text-center ">
+        <div className="mt-4 text-center">
           <p className="text-sm text-gray-600 flex justify-center">
             ¿Ya tienes cuenta?{" "}
-            <p  className="text-black hover:underline cursor-pointer"
-            onClick={()=>{
-              setIsTryRegister(false);
-              setIsTryLogin(true);
-            }}>
+            <span
+              className="text-black hover:underline cursor-pointer"
+              onClick={() => {
+                if (setIsTryRegister) setIsTryRegister(false);
+                if (setIsTryLogin) setIsTryLogin(true);
+              }}
+            >
               Inicia sesión
-            </p>
+            </span>
           </p>
         </div>
       </div>

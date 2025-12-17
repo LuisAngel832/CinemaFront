@@ -1,5 +1,19 @@
-const EliminarPelicula = ({ movie, onCancel, onConfirm }) => {
+import { useState } from "react";
+
+const EliminarPelicula = ({ movie, onCancel, onConfirm, loading }) => {
   if (!movie) return null;
+  
+  const [submitError, setSubmitError] = useState(null);
+
+  const handleDelete = async () => {
+    setSubmitError(null);
+    try {
+      await onConfirm();
+    } catch (error) {
+      console.error("Error al intentar eliminar la película:", error);
+      setSubmitError("Hubo un error al intentar eliminar la película. Por favor, inténtalo de nuevo.");
+    }
+  };
 
   return (
     <div className="z-10 top-0 left-0 w-screen h-screen fixed bg-black/50 flex items-center justify-center">
@@ -27,6 +41,12 @@ const EliminarPelicula = ({ movie, onCancel, onConfirm }) => {
           )}
         </div>
 
+        {submitError && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200 mb-4">
+              {submitError}
+            </div>
+        )}
+
         <p className="text-xs text-gray-500 mb-4">
           Esta acción eliminará la película del catálogo. Revísalo antes de
           confirmar.
@@ -35,17 +55,22 @@ const EliminarPelicula = ({ movie, onCancel, onConfirm }) => {
         <div className="flex gap-3">
           <button
             type="button"
-            className="flex-1 px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold cursor-pointer"
+            className="flex-1 px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={onCancel}
+            disabled={loading}
           >
             Cancelar
           </button>
           <button
             type="button"
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold cursor-pointer"
-            onClick={onConfirm}
+            className="
+              flex-1 px-4 py-2 bg-red-600 text-white rounded-lg transition-colors text-sm font-semibold cursor-pointer
+              hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed
+            "
+            onClick={handleDelete}
+            disabled={loading}
           >
-            Eliminar
+            {loading ? "Eliminando..." : "Eliminar"}
           </button>
         </div>
       </div>

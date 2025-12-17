@@ -13,11 +13,30 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
     title: movie?.title ?? "",
     genre: movie?.genre ?? "",
     durationTime: minutesToTimeString(movie?.duration),
-    price: movie?.price ?? 0,
+    price: movie?.price ?? "",
     language: movie?.language ?? "",
   });
 
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.title) newErrors.title = "El título es obligatorio.";
+    if (!formData.genre) newErrors.genre = "El género es obligatorio.";
+    if (!formData.durationTime) newErrors.durationTime = "La duración es obligatoria (HH:mm).";
+    if (formData.price === "" || formData.price < 0) newErrors.price = "El precio es obligatorio y debe ser positivo.";
+    if (!formData.language) newErrors.language = "El idioma es obligatorio.";
+
+    const timeRegex = /^\d{2}:\d{2}$/;
+    if (formData.durationTime && !timeRegex.test(formData.durationTime)) {
+      newErrors.durationTime = "Formato de duración inválido (debe ser HH:mm).";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,26 +48,35 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
           ? (value === "" ? "" : Number(value))
           : value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+    if (submitError) setSubmitError(null);
   };
 
   const buildPayload = () => {
     let duration = null;
 
     if (formData.durationTime) {
-      duration = `${formData.durationTime}:00`; // LocalTime "HH:mm:ss"
+      duration = `${formData.durationTime}:00`;
     }
 
     return {
       title: formData.title,
       genre: formData.genre,
       duration,
-      price: Number(formData.price),
+      price: Number(formData.price || 0),
       language: formData.language,
     };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!validate()) return;
+
     try {
       setLoading(true);
 
@@ -59,6 +87,7 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
       onCancel();
     } catch (err) {
       console.error("Error al actualizar película", err);
+      setSubmitError("Hubo un error al actualizar la película. Por favor, inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -72,8 +101,8 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
           Modifica los datos de la película seleccionada.
         </p>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          {/* Título */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+          
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Título
@@ -83,20 +112,19 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.title ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
           </div>
 
-          {/* Género */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Género
@@ -106,20 +134,19 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
               name="genre"
               value={formData.genre}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.genre ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.genre && <p className="text-red-500 text-xs mt-1">{errors.genre}</p>}
           </div>
 
-          {/* Duración */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Duración (HH:mm)
@@ -129,20 +156,19 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
               name="durationTime"
               value={formData.durationTime}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.durationTime ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.durationTime && <p className="text-red-500 text-xs mt-1">{errors.durationTime}</p>}
           </div>
 
-          {/* Precio */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Precio
@@ -154,20 +180,19 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
               step="0.01"
               value={formData.price}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.price ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
           </div>
 
-          {/* Idioma */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
@@ -177,18 +202,24 @@ const EditarPelicula = ({ movie, onCancel, onUpdated }) => {
               name="language"
               value={formData.language}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.language ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
-              required
+              `}
             />
+            {errors.language && <p className="text-red-500 text-xs mt-1">{errors.language}</p>}
           </div>
+
+          {submitError && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200">
+              {submitError}
+            </div>
+          )}
 
           <div className="flex gap-3 mt-4">
             <button

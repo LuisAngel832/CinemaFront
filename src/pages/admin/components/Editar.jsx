@@ -10,9 +10,11 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
     movieId: showtime?.movie?.id ?? "",
     roomId: showtime?.room?.idRoom ?? "",
     time: getInitialTime(showtime) || "",
-    language: showtime?.languaje || showtime?.language || "", // nuevo
+    language: showtime?.languaje || showtime?.language || "",
   });
 
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -37,12 +39,28 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
       });
   }, []);
 
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.movieId) newErrors.movieId = "La película es obligatoria.";
+    if (!formData.roomId) newErrors.roomId = "La sala es obligatoria.";
+    if (!formData.time) newErrors.time = "La hora es obligatoria.";
+    if (!formData.language) newErrors.language = "El idioma es obligatorio.";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+    if (submitError) setSubmitError(null);
   };
 
   const buildPayload = () => {
@@ -59,24 +77,28 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
       room: Number(formData.roomId),
       movie: Number(formData.movieId),
       showtime: baseDate.toISOString(),
-      // 👇 va al final, como pediste, con la llave que dijiste
-      language  : formData.language || null,
+      language: formData.language || null,
     };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
+    
+    if (!validate()) return;
+
     try {
       setLoading(true);
 
       const payload = buildPayload();
 
-      await updateRoom(showtime.id, payload);
+      await updateRoom(showtime.id, payload); 
 
       if (onUpdated) onUpdated();
       onCancel();
     } catch (err) {
       console.error("Error al actualizar función", err);
+      setSubmitError("Hubo un error al actualizar la función. Por favor, inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -90,8 +112,8 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
           Modifica los datos de la función seleccionada.
         </p>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          {/* Película */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+          
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Película
@@ -100,15 +122,15 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
               name="movieId"
               value={formData.movieId}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.movieId ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
             >
               <option value="">Selecciona una película</option>
               {movies.map((movie) => (
@@ -117,9 +139,10 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
                 </option>
               ))}
             </select>
+            {errors.movieId && <p className="text-red-500 text-xs mt-1">{errors.movieId}</p>}
           </div>
 
-          {/* Sala */}
+          
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Sala
@@ -128,15 +151,15 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
               name="roomId"
               value={formData.roomId}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.roomId ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
             >
               <option value="">Selecciona una sala</option>
               {rooms.map((room) => (
@@ -145,9 +168,10 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
                 </option>
               ))}
             </select>
+            {errors.roomId && <p className="text-red-500 text-xs mt-1">{errors.roomId}</p>}
           </div>
 
-          {/* Hora */}
+          
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Hora
@@ -157,19 +181,19 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.time ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
             />
+            {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
           </div>
 
-          {/* Idioma / Lenguaje */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
@@ -178,15 +202,15 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
               name="language"
               value={formData.language}
               onChange={handleChange}
-              className="
+              className={`
                 w-full rounded-xl p-2.5 px-3
-                border border-gray-300
+                border ${errors.language ? "border-red-500" : "border-gray-300"}
                 bg-gray-50
                 focus:outline-none
                 focus:border-blue-600
                 focus:ring-2 focus:ring-blue-500/50
                 transition
-              "
+              `}
             >
               <option value="">Selecciona un idioma</option>
               <option value="ESPAÑOL_LAT">Español LAT</option>
@@ -194,7 +218,14 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
               <option value="INGLES_SUB">Inglés SUB</option>
               <option value="INGLES_LAT">Inglés LAT</option>
             </select>
+            {errors.language && <p className="text-red-500 text-xs mt-1">{errors.language}</p>}
           </div>
+          
+          {submitError && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200">
+              {submitError}
+            </div>
+          )}
 
           <div className="flex gap-3 mt-4">
             <button
