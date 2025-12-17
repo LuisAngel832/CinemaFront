@@ -82,9 +82,9 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
       const payload = buildPayload();
       await createShowtime(payload);
 
-      onCreated && onCreated();
-      loadingShowtimes();
-      setIsAdding();
+      onCreated && onCreated(); 
+      loadingShowtimes()
+      setIsAdding();            
     } catch (err) {
       console.error(err);
       const message = err.response?.data?.message || "Ocurrió un error al guardar la función. Inténtalo de nuevo.";
@@ -95,7 +95,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   };
 
   const handleCancel = () => {
-    setIsAdding();
+    setIsAdding(); 
   };
 
   return (
@@ -106,13 +106,8 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
           Agrega una nueva función al calendario de proyecciones.
         </p>
 
-        {apiError && (
-          <div className="mb-4 p-3 rounded-lg bg-red-100 border border-red-200 text-red-700 text-sm">
-            {apiError}
-          </div>
-        )}
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+         
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Película
@@ -140,7 +135,6 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
             </select>
             {errors.movieId && <p className="text-red-500 text-xs mt-1">{errors.movieId}</p>}
           </div>
-
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Sala

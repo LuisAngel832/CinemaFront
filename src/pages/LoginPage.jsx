@@ -15,10 +15,12 @@ export default function LoginPage({ setIsTryLogin, setIsTryRegister }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Por favor, completa todos los campos");
-      return;
-    }
+        if (!email || !password) {
+            setError('Por favor, completa todos los campos');
+            return;
+        }
+        loginUser({ email, password })
+            .then((response) => {
 
     loginUser({ email, password })
       .then((response) => {

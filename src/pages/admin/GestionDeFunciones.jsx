@@ -27,6 +27,7 @@ const GestionDeFunciones = () => {
   const [activeTab, setActiveTab] = useState("funciones");
 
   const [rooms, setRooms] = useState([]);
+  const [searchShowtime, setSearchShowtime] = useState("");
   const [isAddingFuncion, setIsAddingFuncion] = useState(false);
   const [editingShowtime, setEditingShowtime] = useState(null);
   const [deletingShowtime, setDeletingShowtime] = useState(null);
@@ -38,6 +39,7 @@ const GestionDeFunciones = () => {
   const [editingMovie, setEditingMovie] = useState(null);
   const [deletingMovie, setDeletingMovie] = useState(null);
   const [loadingMovies, setLoadingMovies] = useState(false);
+
   const loadShowtimes = () => {
     setLoadingShowtimes(true);
     getShowtimes()
@@ -72,13 +74,10 @@ const GestionDeFunciones = () => {
   const toggleAddingFuncion = () => setIsAddingFuncion((prev) => !prev);
 
   const handleDeleteShowtime = (id) => {
-    deleteRoomApi(id)
+    return deleteRoomApi(id)
       .then(() => {
         setRooms((prev) => prev.filter((room) => room.id !== id));
         setDeletingShowtime(null);
-      })
-      .catch((err) => {
-        console.error("Error al eliminar función", err);
       });
   };
 
@@ -86,13 +85,10 @@ const GestionDeFunciones = () => {
     setIsAddingPelicula((prev) => !prev);
 
   const handleDeleteMovie = (id) => {
-    deleteMovieApi(id)
+    return deleteMovieApi(id)
       .then(() => {
         setMovies((prev) => prev.filter((m) => m.id !== id));
         setDeletingMovie(null);
-      })
-      .catch((err) => {
-        console.error("Error al eliminar película", err);
       });
   };
 
@@ -111,6 +107,22 @@ const GestionDeFunciones = () => {
       );
     });
   }, [movies, searchMovie]);
+
+  const filteredShowtimes = useMemo(() => {
+    if (!searchShowtime.trim()) return rooms;
+
+    const term = searchShowtime.toLowerCase();
+    return rooms.filter((s) => {
+      const movieTitle = s.movie?.title?.toLowerCase() ?? "";
+      const roomName = s.room?.name?.toLowerCase() ?? "";
+      const language = s.languaje?.toLowerCase() ?? s.language?.toLowerCase() ?? "";
+      return (
+        movieTitle.includes(term) ||
+        roomName.includes(term) ||
+        language.includes(term)
+      );
+    });
+  }, [rooms, searchShowtime]);
 
   return (
     <main className="max-w-[900px] mx-auto flex-1 px-8 pt-6 pb-10">
@@ -165,6 +177,8 @@ const GestionDeFunciones = () => {
             <input
               type="search"
               placeholder="Ej: Batman, Sala 1"
+              value={searchShowtime}
+              onChange={(e) => setSearchShowtime(e.target.value)}
               className="
                 w-[85%] rounded-xl p-2 pl-3
                 border border-transparent
@@ -185,7 +199,7 @@ const GestionDeFunciones = () => {
           </div>
 
           <FuncionesTable
-            showtimes={rooms}
+            showtimes={filteredShowtimes}
             loading={loadingShowtimes}
             onEdit={(showtime) => setEditingShowtime(showtime)}
             onDelete={(showtime) => setDeletingShowtime(showtime)}
@@ -223,7 +237,7 @@ const GestionDeFunciones = () => {
           />
 
             <Estadisticas  />
-         
+          
         </>
       )}
     </main>
